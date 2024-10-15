@@ -1,16 +1,16 @@
 import { IconProps } from "iconsax-react";
 import { IconNode } from "lucide-react";
-import { HTMLProps } from "react";
+import React, { HTMLProps } from "react";
 import { IconBaseProps } from "react-icons";
 
 declare global {
-  type IconType = React.FC<IconProps | IconBaseProps> | IconNode;
+  export type IconType = React.FC<IconProps | IconBaseProps> | IconNode;
 
-  type LabelProps = {
+  export type LabelProps = {
     children: React.ReactNode;
   } & HTMLProps<HTMLLabelElement>;
 
-  type InputElementProps = {
+  export type InputElementProps = {
     label?: React.ReactNode;
     inputClassName?: string;
     inputParentClassName?: string;
@@ -19,7 +19,7 @@ declare global {
     error?: string;
   } & HTMLProps<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
 
-  type InputFieldProps = {
+  export type InputFieldProps = {
     buttonTitle?: string;
     rightIcon?: React.ReactNode;
     leftIcon?: React.ReactNode;
@@ -32,12 +32,12 @@ declare global {
     iconProps?: IconProps;
   } & InputElementProps;
 
-  type SelectOptionType = {
+  export type SelectOptionType = {
     value: string;
     label: string;
   };
 
-  type SelectBoxType = {
+  export type SelectBoxType = {
     options?: SelectOptionType[];
     emptyOptionLabel?: string;
     hideEmptyOption?: boolean;

@@ -1,16 +1,18 @@
 import React from "react";
 
-const Button: React.FC<{
-  type?: "button" | "submit" | "reset";
-  buttonType?: "primary" | "secondary" | "black" | "white" | "default";
-  size?: "medium" | "large" | "small";
-  loading?: boolean;
-  disabled?: boolean;
-  className?: string;
-  children: React.ReactNode;
-  buttonTitle?: string;
-  isSpecial?: boolean;
-}> = ({
+const Button: React.FC<
+  {
+    type?: "button" | "submit" | "reset";
+    buttonType?: "primary" | "secondary" | "black" | "white" | "default";
+    size?: "medium" | "large" | "small";
+    loading?: boolean;
+    disabled?: boolean;
+    className?: string;
+    children: React.ReactNode;
+    buttonTitle?: string;
+    isSpecial?: boolean;
+  } & React.ButtonHTMLAttributes<HTMLButtonElement>
+> = ({
   type,
   buttonType,
   size,

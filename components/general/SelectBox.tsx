@@ -1,6 +1,5 @@
 import React, { forwardRef } from "react";
 import Label from "./Label";
-import { SelectBoxType } from "@/utils/types";
 
 const SelectBox = forwardRef<HTMLSelectElement, SelectBoxType>(
   (
@@ -35,7 +34,7 @@ const SelectBox = forwardRef<HTMLSelectElement, SelectBoxType>(
           )}
 
           <div
-            className={`${inputParentClassName} w-full relative flex items-stretch justify-center`}
+            className={`${inputParentClassName} w-full relative flex items-stretch`}
           >
             <select
               {...props}

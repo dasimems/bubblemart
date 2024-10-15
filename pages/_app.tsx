@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 import SEO from "@/components/general/SEO";
 import Footer from "@/components/general/Footer";
 import Nav from "@/components/general/Nav";
+import { useRouter } from "next/router";
 export type AppEngineProps = AppProps & {
   Component: {
     title?: string;
@@ -16,10 +17,14 @@ export type AppEngineProps = AppProps & {
     image?: string;
     imageDescription?: string;
     locale?: string;
+    hideFooter?: boolean;
+    hideNav?: boolean;
   };
 };
 
 export default function App({ Component, pageProps }: AppEngineProps) {
+  const { pathname } = useRouter();
+  const isAuthRoute = pathname.includes("/auth/");
   useEffect(() => {
     aos.init({
       once: true,
@@ -37,9 +42,9 @@ export default function App({ Component, pageProps }: AppEngineProps) {
         imageDescription={Component?.imageDescription}
         locale={Component?.locale}
       />
-      <Nav />
+      {!Component.hideNav && !isAuthRoute && <Nav />}
       <Component {...pageProps} />
-      <Footer />
+      {!Component.hideFooter && !isAuthRoute && <Footer />}
       <ToastContainer
         autoClose={3000}
         newestOnTop
