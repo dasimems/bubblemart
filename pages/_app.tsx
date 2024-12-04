@@ -10,6 +10,7 @@ import SEO from "@/components/general/SEO";
 import Footer from "@/components/general/Footer";
 import Nav from "@/components/general/Nav";
 import { useRouter } from "next/router";
+import AccountLayout from "@/components/layouts/AccountLayout";
 export type AppEngineProps = AppProps & {
   Component: {
     title?: string;
@@ -25,6 +26,7 @@ export type AppEngineProps = AppProps & {
 export default function App({ Component, pageProps }: AppEngineProps) {
   const { pathname } = useRouter();
   const isAuthRoute = pathname.includes("/auth/");
+  const isAccountRoute = pathname.includes("/account");
   useEffect(() => {
     aos.init({
       once: true,
@@ -42,9 +44,19 @@ export default function App({ Component, pageProps }: AppEngineProps) {
         imageDescription={Component?.imageDescription}
         locale={Component?.locale}
       />
-      {!Component.hideNav && !isAuthRoute && <Nav />}
-      <Component {...pageProps} />
-      {!Component.hideFooter && !isAuthRoute && <Footer />}
+      {!isAccountRoute && (
+        <>
+          {!Component.hideNav && !isAuthRoute && <Nav />}
+          <Component {...pageProps} />
+          {!Component.hideFooter && !isAuthRoute && <Footer />}
+        </>
+      )}
+
+      {isAccountRoute && (
+        <AccountLayout>
+          <Component {...pageProps} />
+        </AccountLayout>
+      )}
       <ToastContainer
         autoClose={3000}
         newestOnTop
