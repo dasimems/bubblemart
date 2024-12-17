@@ -78,6 +78,8 @@ const Modal: React.FC<{
     case "center-right":
       modalContainerClassName = "top-1/2 right-0 -translate-y-1/2";
       break;
+    default:
+      break;
   }
 
   useEffect(() => {

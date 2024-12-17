@@ -9,7 +9,7 @@
     "no-use-before-define": "error",
     "use-isnan": "error",
     "camelcase": "error",
-    "curly": "error",
+    "curly": "error", 
     "default-case": "error",
     "default-case-last": "error",
     "eqeqeq": "error",
