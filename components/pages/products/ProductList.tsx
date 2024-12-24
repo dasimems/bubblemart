@@ -1,44 +1,73 @@
 import SectionContainer from "@/components/layouts/SectionContainer";
 import React, { useCallback, useEffect, useState } from "react";
-import ProductCard from "./ProductCard";
 import ProductCardLoader from "@/components/general/ProductCardLoader";
-import { ProductDetailsType } from "@/store/useProductStore";
+import { ProductDetailsType, ProductType } from "@/store/useProductStore";
 import { getData } from "@/api";
-import { ProductResponseType } from "@/hooks/useProduct";
-import ErrorContainer from "@/components/status/ErrorContainer";
+import useProduct, { ProductResponseType } from "@/hooks/useProduct";
+import ProductCard from "../home/ProductCard";
 import EmptyContainer from "@/components/status/EmptyContainer";
-import { constructErrorMessage } from "../../../utils/functions";
+import ErrorContainer from "@/components/status/ErrorContainer";
+import { useParams } from "next/navigation";
 
 export type ProductsPropsType = {
   hideTitle?: boolean;
 };
 
-const Products: React.FC<ProductsPropsType> = ({ hideTitle }) => {
+const ProductList: React.FC<ProductsPropsType> = ({ hideTitle }) => {
   const [products, setProducts] = useState<ProductDetailsType[] | null>(null);
   const [productsFetchingError, setProductsFetchingError] = useState<
     string | null
   >(null);
-
-  const getProducts = useCallback(async () => {
-    setProductsFetchingError(null);
-    setProducts(null);
-    try {
-      const { data } = await getData<ProductResponseType>("/product?max=6");
-      const { data: content } = data;
-      setProducts(content);
-    } catch (error) {
-      setProductsFetchingError(
-        constructErrorMessage(
-          error as ApiErrorResponseType,
-          "Error encountered whilst fetching product list!"
-        )
-      );
-    }
-  }, []);
+  const { productType } = useParams<{ productType?: "gifts" | "logs" }>() || {};
+  const {
+    giftProducts,
+    logProducts,
+    fetchingGiftProductsError,
+    fetchingLogProductsError,
+    isNextGiftProductLoading,
+    isNextLogProductLoading,
+    getProducts
+  } = useProduct();
 
   useEffect(() => {
-    getProducts();
-  }, [getProducts]);
+    setProducts(null);
+
+    if (productType) {
+      if (productType === "gifts" && !giftProducts) {
+        getProducts("gift");
+      }
+      if (productType === "logs" && !logProducts) {
+        getProducts("log");
+      }
+    }
+  }, [productType, giftProducts, logProducts, getProducts]);
+
+  useEffect(() => {
+    if (productType) {
+      if (productType === "gifts") {
+        if (giftProducts) {
+          setProducts(giftProducts);
+        }
+        if (fetchingGiftProductsError) {
+          setProductsFetchingError(fetchingGiftProductsError);
+        }
+      }
+      if (productType === "logs") {
+        if (logProducts) {
+          setProducts(logProducts);
+        }
+        if (fetchingLogProductsError) {
+          setProductsFetchingError(fetchingLogProductsError);
+        }
+      }
+    }
+  }, [
+    productType,
+    logProducts,
+    giftProducts,
+    fetchingLogProductsError,
+    fetchingGiftProductsError
+  ]);
 
   return (
     <SectionContainer contentContainerClassName="gap-10 flex flex-col">
@@ -81,4 +110,4 @@ const Products: React.FC<ProductsPropsType> = ({ hideTitle }) => {
   );
 };
 
-export default Products;
+export default ProductList;

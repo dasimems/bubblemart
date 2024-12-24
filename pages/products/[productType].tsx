@@ -1,9 +1,9 @@
 import SelectBox from "@/components/general/SelectBox";
 import PageLayout from "@/components/layouts/PageLayout";
 import SectionContainer from "@/components/layouts/SectionContainer";
-import Products from "@/components/pages/home/Products";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
+import AllProductList from "@/components/pages/products/ProductList";
 import React from "react";
 
 const options: SelectOptionType[] = [
@@ -29,7 +29,7 @@ const ProductList = () => {
         />
       </SectionContainer>
 
-      <Products hideTitle />
+      <AllProductList />
     </PageLayout>
   );
 };

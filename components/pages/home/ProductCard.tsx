@@ -1,18 +1,25 @@
 import { ProductImage } from "@/assets/images";
 import Button from "@/components/Button";
 import InputField from "@/components/general/InputField";
+import { ProductDetailsType } from "@/store/useProductStore";
 import { siteName } from "@/utils/variables";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
-const ProductCard = () => {
+const ProductCard: React.FC<ProductDetailsType> = ({
+  name,
+  image,
+  description,
+  type,
+  amount
+}) => {
   return (
     <div className="flex flex-col sm:flex-row items-stretch rounded-3xl border shadow-md p-10 gap-10 bg-white border-slate-300">
       <div className=" w-full sm:w-1/3 md:w-3/6 h-[clamp(10rem,20vw,20rem)] shrink-0 bg-slate-200 rounded-2xl overflow-hidden relative">
         <Image
-          alt={`Product ${siteName}`}
-          src={ProductImage}
+          alt={`${name}-${description}`}
+          src={image}
           fill
           className="object-cover object-center"
         />
@@ -20,15 +27,19 @@ const ProductCard = () => {
 
       <div className="flex flex-col justify-between flex-1 gap-4">
         <div className="flex flex-col gap-1">
-          <p className="text-primary-800">Edible gifts</p>
+          <p className="text-primary-800">
+            {type === "gift" ? "Edible gifts" : ""}
+          </p>
           <h1 className="font-bold text-[clamp(1rem,5vw,1.5rem)] text-primary">
-            Pizza & Drink
+            {name}
           </h1>
-          <h1 className="font-bold text-[clamp(1rem,5vw,1.5rem)]">₦10,600</h1>
+          <h1 className="font-bold text-[clamp(1rem,5vw,1.5rem)]">
+            {amount?.formatted?.withCurrency}
+          </h1>
         </div>
         <div className="flex flex-col gap-1">
           <p className="text-primary-800">Description</p>
-          <p>Tasty pizza and cocacola drink</p>
+          <p>{description}</p>
         </div>
         <div className="flex flex-col gap-2">
           <p className="text-primary-800">Quantity</p>
