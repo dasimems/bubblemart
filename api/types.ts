@@ -36,7 +36,7 @@ declare global {
 
   export type ErrorResponseType = {
     message?: string;
-    errors?: {
+    error?: {
       [name: string]: string[];
     };
   };

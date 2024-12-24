@@ -65,7 +65,9 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
               ref={ref}
               type={type || "text"}
               placeholder={placeholder || label || "Input field"}
-              className={`${inputClassName} peer/radio-btn border py-3 px-5 outline-none rounded-md w-full h-full`}
+              className={`${inputClassName} peer/radio-btn border ${
+                error && "!border-red-400"
+              } py-3 px-5 outline-none rounded-md w-full h-full`}
             />
 
             {rightIcon && (

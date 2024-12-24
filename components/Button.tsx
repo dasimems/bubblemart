@@ -3,7 +3,13 @@ import React from "react";
 const Button: React.FC<
   {
     type?: "button" | "submit" | "reset";
-    buttonType?: "primary" | "secondary" | "black" | "white" | "default";
+    buttonType?:
+      | "primary"
+      | "secondary"
+      | "black"
+      | "white"
+      | "default"
+      | "primary-dark";
     size?: "medium" | "large" | "small";
     loading?: boolean;
     disabled?: boolean;
@@ -33,6 +39,8 @@ const Button: React.FC<
       break;
     case "primary":
       buttonStyleClassName = "bg-[#5BC4BE]";
+    case "primary-dark":
+      buttonStyleClassName = "bg-primary text-white";
       break;
     case "secondary":
       buttonStyleClassName = "bg-secondary";
@@ -56,9 +64,9 @@ const Button: React.FC<
   return (
     <button
       aria-label={buttonTitle ?? "mems system"}
-      disabled={loading ?? disabled}
+      disabled={loading || disabled}
       type={type}
-      className={`${buttonStyleClassName} ${buttonSizeClassName} disabled:bg-[#C0C0C0] rounded-2xl py-3 px-5 ${
+      className={`${buttonStyleClassName} ${buttonSizeClassName} disabled:!cursor-not-allowed disabled:bg-[#C0C0C0] rounded-2xl py-3 px-5 ${
         isSpecial ? "rounded-tl-none rounded-bl-3xl" : ""
       } ${className}`}
       {...props}
