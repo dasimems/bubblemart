@@ -2,7 +2,7 @@ import SectionContainer from "@/components/layouts/SectionContainer";
 import React, { useCallback, useEffect, useState } from "react";
 import ProductCardLoader from "@/components/general/ProductCardLoader";
 import { ProductDetailsType, ProductType } from "@/store/useProductStore";
-import useProduct, { ProductResponseType } from "@/hooks/useProduct";
+import useProduct from "@/hooks/useProduct";
 import ProductCard from "../home/ProductCard";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";

@@ -6,7 +6,7 @@ import useUser from "./useUser";
 
 const useAuth = () => {
   const { setUserToken } = useUserStore();
-  const { getUserDetails, logoutUser } = useUser();
+  const { getUserDetails } = useUser();
 
   const performAuthOperations = useCallback(
     (token: string, shouldNotSaveToken?: boolean) => {
