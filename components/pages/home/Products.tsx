@@ -4,7 +4,6 @@ import ProductCard from "./ProductCard";
 import ProductCardLoader from "@/components/general/ProductCardLoader";
 import { ProductDetailsType } from "@/store/useProductStore";
 import { getData } from "@/api";
-import { ProductResponseType } from "@/hooks/useProduct";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import { constructErrorMessage } from "../../../utils/functions";
@@ -23,7 +22,9 @@ const Products: React.FC<ProductsPropsType> = ({ hideTitle }) => {
     setProductsFetchingError(null);
     setProducts(null);
     try {
-      const { data } = await getData<ProductResponseType>("/product?max=6");
+      const { data } = await getData<ApiCallResponseType<ProductDetailsType[]>>(
+        "/product?max=6"
+      );
       const { data: content } = data;
       setProducts(content);
     } catch (error) {
