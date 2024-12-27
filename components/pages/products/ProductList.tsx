@@ -1,7 +1,7 @@
 import SectionContainer from "@/components/layouts/SectionContainer";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductCardLoader from "@/components/general/ProductCardLoader";
-import { ProductDetailsType, ProductType } from "@/store/useProductStore";
+import { ProductDetailsType } from "@/store/useProductStore";
 import useProduct from "@/hooks/useProduct";
 import ProductCard from "../home/ProductCard";
 import EmptyContainer from "@/components/status/EmptyContainer";
@@ -70,11 +70,11 @@ const ProductList: React.FC<ProductsPropsType> = ({ hideTitle }) => {
 
   return (
     <SectionContainer contentContainerClassName="gap-10 flex flex-col">
-      {!hideTitle && (
+      {/* {!hideTitle && (
         <h1 className="max-w-[300px] font-bold text-[clamp(1.2rem,5vw,2rem)] self-center text-center">
           Explore what <br /> we have for you.
         </h1>
-      )}
+      )} */}
 
       {products && !productsFetchingError && products.length < 1 && (
         <EmptyContainer />
