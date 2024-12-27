@@ -1,0 +1,16 @@
+.Toastify__toast_container {
+  width: fit-content;
+}
+
+.Toastify__toast {
+  /* Basic Toast Styling */
+  /* background: var(--accent); */
+  color: #fff;
+  width: fit-content;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.Toastify__toast_body {
+  padding: 10px 15px;
+}

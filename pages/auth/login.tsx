@@ -1,12 +1,16 @@
 import { postData } from "@/api";
+import { LoginSvgImage } from "@/assets/svgs";
 import Button from "@/components/Button";
 import InputField from "@/components/general/InputField";
 import AuthLayout from "@/components/layouts/AuthLayout";
+import useAuth from "@/hooks/useAuth";
+import { UserDetailsType } from "@/store/useUserStore";
 import { constructErrorMessage } from "@/utils/functions";
 import Link from "next/link";
 import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdCancel } from "react-icons/md";
+import { toast } from "react-toastify";
 
 export type LoginBodyType = {
   email: string;
@@ -20,6 +24,7 @@ const defaultValues: LoginBodyType = {
 
 const Login = () => {
   const [loginError, setLoginError] = useState<string | null>(null);
+  const { performAuthOperations } = useAuth();
   const {
     register,
     handleSubmit,
@@ -29,21 +34,35 @@ const Login = () => {
     mode: "onChange"
   });
 
-  const loginUser = useCallback(async (data: LoginBodyType) => {
-    setLoginError(null);
-    try {
-      await postData("/auth/login", data);
-    } catch (error) {
-      setLoginError(
-        constructErrorMessage(
-          error as ApiErrorResponseType,
-          "Unknown error occurred whilst login in!"
-        )
-      );
-    }
-  }, []);
+  const loginUser = useCallback(
+    async (body: LoginBodyType) => {
+      setLoginError(null);
+      try {
+        const { data } = await postData<
+          LoginBodyType,
+          ApiCallResponseType<UserDetailsType>
+        >("/auth/login", body);
+        const { auth } = data;
+        if (auth) {
+          performAuthOperations(auth?.token);
+        }
+        toast("Login successful");
+      } catch (error) {
+        setLoginError(
+          constructErrorMessage(
+            error as ApiErrorResponseType,
+            "Unknown error occurred whilst login in!"
+          )
+        );
+      }
+    },
+    [performAuthOperations]
+  );
   return (
-    <AuthLayout className="md:min-h-full flex flex-col items-center justify-center p-10">
+    <AuthLayout
+      SVGImage={LoginSvgImage}
+      className="md:min-h-full flex flex-col items-center justify-center p-10"
+    >
       <div className="md:max-w-[27rem] w-full flex flex-col gap-6">
         {loginError && (
           <div className="bg-red-100 rounded-md p-3 px-5 flex items-center justify-between">

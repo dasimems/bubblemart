@@ -1,8 +1,10 @@
 import { postData } from "@/api";
+import { RegisterSvgImage } from "@/assets/svgs";
 import Button from "@/components/Button";
 import InputField from "@/components/general/InputField";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import { constructErrorMessage } from "@/utils/functions";
+import { passwordRegExp } from "@/utils/regex";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useCallback, useState } from "react";
@@ -31,11 +33,14 @@ const Register = () => {
     handleSubmit,
     reset,
     setError,
+    watch,
     formState: { isSubmitting, isValid, errors }
   } = useForm<LoginBodyType>({
     defaultValues,
     mode: "onChange"
   });
+
+  const password = watch("password");
 
   const registerUser = useCallback(
     async (data: LoginBodyType) => {
@@ -51,8 +56,8 @@ const Register = () => {
           const errorsFromServerKeys = Object.keys(errorsFromServer);
           errorsFromServerKeys.forEach((key, index) => {
             setError(
-              key,
-              { message: errorsFromServer[key], type: "validate" },
+              key as keyof LoginBodyType,
+              { message: errorsFromServer[key]?.toString(), type: "validate" },
               { shouldFocus: index === 0 }
             );
           });
@@ -65,10 +70,13 @@ const Register = () => {
         );
       }
     },
-    [push, reset]
+    [push, reset, setError]
   );
   return (
-    <AuthLayout className="md:min-h-full flex flex-col items-center justify-center p-10">
+    <AuthLayout
+      SVGImage={RegisterSvgImage}
+      className="md:min-h-full flex flex-col items-center justify-center p-10"
+    >
       <div className="md:max-w-[27rem] w-full flex flex-col gap-6">
         {registerError && (
           <div className="bg-red-100 rounded-md p-3 px-5 flex items-center justify-between">
@@ -108,7 +116,16 @@ const Register = () => {
           placeholder="Password here..."
           error={errors?.password?.message}
           {...register("password", {
-            required: "Please provide your password"
+            required: "Please provide your password",
+            pattern: {
+              value: passwordRegExp,
+              message:
+                "Your password must contain at least 1 uppercase, 1 lowercase, and 1 special character"
+            },
+            minLength: {
+              value: 8,
+              message: "Your password must be of 8 or more character"
+            }
           })}
         />
         <InputField
@@ -117,7 +134,11 @@ const Register = () => {
           placeholder="Repeat your password"
           error={errors?.confirmPassword?.message}
           {...register("confirmPassword", {
-            required: "Please repeat your password"
+            required: "Please repeat your password",
+            validate: (value) =>
+              value === password
+                ? undefined
+                : "Your repeated password doesn't match"
           })}
         />
         <p className="font-bold opacity-60">

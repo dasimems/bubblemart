@@ -5,12 +5,13 @@ import { useEffect } from "react";
 import aos from "aos";
 import "aos/dist/aos.css";
 import NextNProgress from "nextjs-progressbar";
-import { ToastContainer } from "react-toastify";
 import SEO from "@/components/general/SEO";
 import Footer from "@/components/general/Footer";
 import Nav from "@/components/general/Nav";
 import { useRouter } from "next/router";
 import AccountLayout from "@/components/layouts/AccountLayout";
+import ApplicationWrapper from "@/components/layouts/ApplicationWrapper";
+import CustomToast from "@/components/ui/customToast/CustomToast";
 export type AppEngineProps = AppProps & {
   Component: {
     title?: string;
@@ -45,11 +46,11 @@ export default function App({ Component, pageProps }: AppEngineProps) {
         locale={Component?.locale}
       />
       {!isAccountRoute && (
-        <>
+        <ApplicationWrapper>
           {!Component.hideNav && !isAuthRoute && <Nav />}
           <Component {...pageProps} />
           {!Component.hideFooter && !isAuthRoute && <Footer />}
-        </>
+        </ApplicationWrapper>
       )}
 
       {isAccountRoute && (
@@ -57,12 +58,7 @@ export default function App({ Component, pageProps }: AppEngineProps) {
           <Component {...pageProps} />
         </AccountLayout>
       )}
-      <ToastContainer
-        autoClose={3000}
-        newestOnTop
-        position="top-center"
-        limit={1}
-      />
+      <CustomToast />
     </>
   );
 }

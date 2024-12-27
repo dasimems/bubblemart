@@ -6,10 +6,6 @@ import useProductStore, {
 import { constructErrorMessage } from "@/utils/functions";
 import { useCallback } from "react";
 
-export type ProductResponseType = {
-  data: ProductDetailsType[];
-} & ResultPaginationType;
-
 const useProduct = () => {
   const {
     setGiftProducts,
@@ -21,9 +17,9 @@ const useProduct = () => {
   const getProducts = useCallback(
     async (type: ProductType = "gift") => {
       try {
-        const { data } = await getData<ProductResponseType>(
-          `/product?page=1&type=${type}`
-        );
+        const { data } = await getData<
+          ApiCallResponseType<ProductDetailsType[]>
+        >(`/product?page=1&type=${type}`);
         const { data: content } = data;
         if (type === "gift") {
           setGiftProducts(content);

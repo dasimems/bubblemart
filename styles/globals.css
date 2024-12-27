@@ -5,3 +5,19 @@
 body {
   color: black;
 }
+
+.Toastify__toast-theme--colored.Toastify__toast--default {
+  background: #0a434f !important;
+}
+.Toastify__toast-theme--colored.Toastify__toast--info {
+  background: #0a434f !important;
+}
+.Toastify__toast-theme--colored.Toastify__toast--success {
+  background: #0a434f !important;
+}
+.Toastify__toast-theme--colored.Toastify__toast--warning {
+  background: #f26b6c !important;
+}
+.Toastify__toast-theme--colored.Toastify__toast--error {
+  background: #f26b6c !important;
+}

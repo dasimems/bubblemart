@@ -4,12 +4,19 @@ import TextArea from "@/components/general/TextArea";
 import PageLayout from "@/components/layouts/PageLayout";
 import SectionContainer from "@/components/layouts/SectionContainer";
 import ProductCard from "@/components/pages/home/ProductCard";
+import useCart from "@/hooks/useCart";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { FaAngleLeft } from "react-icons/fa";
 
 const Cart = () => {
   const { back, push } = useRouter();
+  const { getCart } = useCart();
+
+  useEffect(() => {
+    getCart();
+  }, [getCart]);
+
   return (
     <PageLayout>
       <SectionContainer contentContainerClassName="flex flex-col gap-10">

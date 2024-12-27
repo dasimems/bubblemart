@@ -27,12 +27,22 @@ declare global {
   };
 
   export type ResultPaginationType = {
-    total: number;
-    pageNum: number;
-    activePage: number;
-    previousLink: LinkType;
-    nextLink: LinkType;
+    total?: number;
+    pageNum?: number;
+    activePage?: number;
+    previousLink?: LinkType;
+    nextLink?: LinkType;
   };
+
+  export type AuthDetailsType = {
+    type: "Bearer";
+    token: string;
+  };
+
+  export type ApiCallResponseType<T> = {
+    data: T;
+    auth?: AuthDetailsType;
+  } & ResultPaginationType;
 
   export type ErrorResponseType = {
     message?: string;
