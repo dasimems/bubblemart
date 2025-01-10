@@ -73,7 +73,7 @@ const useCartStore = create<CartStoreType>((set) => ({
     });
   },
   setCartFetchingError: (cartFetchingError) => {
-    set({ cartFetchingError });
+    set({ cartFetchingError, isNextCartLoading: false });
   },
   isFetchingNextCart: () => {
     set({ isNextCartLoading: true, cartFetchingError: null });

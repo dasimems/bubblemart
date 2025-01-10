@@ -113,7 +113,7 @@ const Cart = () => {
           </div>
         </SectionContainer>
       )}
-      {carts && !cartFetchingError && Cart.length < 1 && (
+      {carts && !cartFetchingError && carts.length < 1 && (
         <EmptyContainer description="You have no cart at the moment!" />
       )}
       {cartFetchingError && (

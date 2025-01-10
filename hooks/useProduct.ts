@@ -23,9 +23,11 @@ const useProduct = () => {
         const { data: content } = data;
         if (type === "gift") {
           setGiftProducts(content);
+          setFetchingGiftProductsError();
         }
         if (type === "log") {
           setLogProducts(content);
+          setFetchingLogProductsError();
         }
       } catch (error) {
         if (type === "gift") {
@@ -53,7 +55,7 @@ const useProduct = () => {
       setFetchingGiftProductsError
     ]
   );
-  return { getProducts, ...details };
+  return { getProducts, setGiftProducts, setLogProducts, ...details };
 };
 
 export default useProduct;

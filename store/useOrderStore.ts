@@ -1,0 +1,48 @@
+import { create } from "zustand";
+import { CartDetailsType } from "./useCartStore";
+
+export type OrderDetailsType = {
+  cartItems: CartDetailsType[];
+  id: string;
+};
+
+type OrderStoreType = {
+  orders: OrderDetailsType[] | null;
+  fetchingOrderError: string | null;
+  isLoadingNextOrder: boolean;
+
+  setOrders: (order: OrderDetailsType[]) => void;
+  setFetchingOrderError: (error: string) => void;
+  isFetchingNextOrder: () => void;
+};
+
+const initialValue = {
+  orders: null,
+  fetchingOrderError: null,
+  isLoadingNextOrder: false
+};
+
+const useOrderStore = create<OrderStoreType>((set) => ({
+  ...initialValue,
+  setOrders: (orders) => {
+    set({
+      orders,
+      isLoadingNextOrder: false,
+      fetchingOrderError: null
+    });
+  },
+  setFetchingOrderError: (fetchingOrderError) => {
+    set({
+      fetchingOrderError,
+      isLoadingNextOrder: false
+    });
+  },
+  isFetchingNextOrder: () => {
+    set({
+      isLoadingNextOrder: true,
+      fetchingOrderError: null
+    });
+  }
+}));
+
+export default useOrderStore;

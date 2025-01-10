@@ -142,7 +142,7 @@ const AccountSidebar = () => {
               label: "Gift mail"
             },
             {
-              path: "/account/products?type=social",
+              path: "/account/products?type=log",
               label: "Fitsocial"
             }
           ]}

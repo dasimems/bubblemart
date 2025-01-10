@@ -30,7 +30,7 @@ const initialValue = {
 const useUserStore = create<UserStoreType>((set) => ({
   ...initialValue,
   setUserDetails: (userDetails) => {
-    set({ userDetails });
+    set({ userDetails, fetchingUserDetailsError: null });
   },
   setUserToken: (userToken) => {
     set({ userToken });
