@@ -74,9 +74,16 @@ const Add = () => {
     }
   }, [push, selectedType, type, pathname]);
 
-  const changeValue = useCallback((sentIndex: number, sentValue: LogBodyType)=>{
-    setLogs(prevState => prevState.map((value, index) => index === sentIndex? sentValue : value))
-  }, [])
+  const changeValue = useCallback(
+    (sentIndex: number, sentValue: LogBodyType) => {
+      setLogs((prevState) =>
+        prevState.map((value, index) =>
+          index === sentIndex ? sentValue : value
+        )
+      );
+    },
+    []
+  );
 
   const addProduct = useCallback(
     async (productBody: AddProductBodyType) => {
