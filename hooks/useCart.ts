@@ -6,6 +6,7 @@ import { useCallback } from "react";
 const useCart = () => {
   const { setCarts, setCartFetchingError, ...details } = useCartStore();
   const getCart = useCallback(async () => {
+    setCartFetchingError();
     try {
       const { data } = await getData<ApiCallResponseType<CartDetailsType[]>>(
         "/cart"

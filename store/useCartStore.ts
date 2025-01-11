@@ -49,7 +49,7 @@ export type CartStoreType = {
   doCartNeedAddress: boolean;
 
   setCarts: (carts: CartDetailsType[]) => void;
-  setCartFetchingError: (error: string) => void;
+  setCartFetchingError: (error?: string | null) => void;
   isFetchingNextCart: () => void;
   setCartNeedAddress: (needed: boolean) => void;
 
@@ -72,7 +72,7 @@ const useCartStore = create<CartStoreType>((set) => ({
       cartFetchingError: null
     });
   },
-  setCartFetchingError: (cartFetchingError) => {
+  setCartFetchingError: (cartFetchingError = null) => {
     set({ cartFetchingError, isNextCartLoading: false });
   },
   isFetchingNextCart: () => {
