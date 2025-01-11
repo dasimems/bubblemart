@@ -4,15 +4,20 @@ import { constructErrorMessage } from "@/utils/functions";
 import { useCallback } from "react";
 
 const useCart = () => {
-  const { setCarts, setCartFetchingError, ...details } = useCartStore();
+  const { setCarts, setCartFetchingError, setCartNeedAddress, ...details } =
+    useCartStore();
   const getCart = useCallback(async () => {
     setCartFetchingError();
     try {
-      const { data } = await getData<ApiCallResponseType<CartDetailsType[]>>(
-        "/cart"
-      );
+      const { data } = await getData<
+        ApiCallResponseType<{
+          carts: CartDetailsType[];
+          isAddressNeeded: boolean;
+        }>
+      >("/cart");
       const { data: content } = data;
-      setCarts(content);
+      setCarts(content?.carts || []);
+      setCartNeedAddress(content?.isAddressNeeded);
     } catch (error) {
       setCartFetchingError(
         constructErrorMessage(
