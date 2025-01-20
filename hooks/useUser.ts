@@ -50,7 +50,7 @@ const useUser = () => {
     }
   }, [setFetchingUserDetailsError, setUserDetails, validateError]);
 
-  return { getUserDetails, ...details };
+  return { getUserDetails, logoutUser, ...details };
 };
 
 export default useUser;

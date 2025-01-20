@@ -85,6 +85,8 @@ const Add = () => {
     []
   );
 
+  const uploadAttachment = useCallback(() => {}, []);
+
   const addProduct = useCallback(
     async (productBody: AddProductBodyType) => {
       const { type } = productBody;
@@ -210,6 +212,7 @@ const Add = () => {
                   <input
                     type="file"
                     accept="image/*"
+                    onChange={uploadAttachment}
                     title="Click or drag to upload"
                     className="w-full h-full absolute top-0 left-0 opacity-0 z-10 cursor-pointer"
                   />

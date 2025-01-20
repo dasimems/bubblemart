@@ -3,10 +3,12 @@ import Button from "@/components/Button";
 import SectionContainer from "@/components/layouts/SectionContainer";
 import { siteName } from "@/utils/variables";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React from "react";
 import { FaRegArrowAltCircleRight } from "react-icons/fa";
 
 const Banner = () => {
+  const { push } = useRouter();
   return (
     <SectionContainer contentContainerClassName="flex flex-col gap-6">
       <h1 className="text-center text-primary font-bold font-satoshi max-w-[800px] self-center mx-auto text-[clamp(1.5rem,5vw,3.5rem)]">
@@ -18,6 +20,9 @@ const Banner = () => {
       </p>
       <div className="flex items-center gap-10 justify-center">
         <Button
+          onClick={() => {
+            push("/products/logs");
+          }}
           buttonType="secondary"
           className="flex items-center gap-4 !rounded-full text-white"
         >
@@ -26,7 +31,12 @@ const Banner = () => {
             <FaRegArrowAltCircleRight />
           </span>
         </Button>
-        <Button className="flex items-center gap-4 !rounded-full !bg-[#5BC4BE] text-primary">
+        <Button
+          onClick={() => {
+            push("/products/gifts");
+          }}
+          className="flex items-center gap-4 !rounded-full !bg-[#5BC4BE] text-primary"
+        >
           <span>Send Gifts</span>
           <span>
             <FaRegArrowAltCircleRight />
