@@ -12,14 +12,14 @@ type OrderStoreType = {
   isLoadingNextOrder: boolean;
 
   setOrders: (order: OrderDetailsType[]) => void;
-  setFetchingOrderError: (error: string) => void;
+  setFetchingOrderError: (error?: string | null) => void;
   isFetchingNextOrder: () => void;
 };
 
 const initialValue = {
   orders: null,
   fetchingOrderError: null,
-  isLoadingNextOrder: false
+  isLoadingNextOrder: false,
 };
 
 const useOrderStore = create<OrderStoreType>((set) => ({
@@ -28,21 +28,21 @@ const useOrderStore = create<OrderStoreType>((set) => ({
     set({
       orders,
       isLoadingNextOrder: false,
-      fetchingOrderError: null
+      fetchingOrderError: null,
     });
   },
-  setFetchingOrderError: (fetchingOrderError) => {
+  setFetchingOrderError: (fetchingOrderError = null) => {
     set({
       fetchingOrderError,
-      isLoadingNextOrder: false
+      isLoadingNextOrder: false,
     });
   },
   isFetchingNextOrder: () => {
     set({
       isLoadingNextOrder: true,
-      fetchingOrderError: null
+      fetchingOrderError: null,
     });
-  }
+  },
 }));
 
 export default useOrderStore;

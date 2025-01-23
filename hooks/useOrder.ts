@@ -6,6 +6,7 @@ import { useCallback } from "react";
 const useOrder = () => {
   const { setOrders, setFetchingOrderError, ...details } = useOrderStore();
   const getOrders = useCallback(async () => {
+    setFetchingOrderError();
     try {
       const { data } = await getData<ApiCallResponseType<OrderDetailsType[]>>(
         "/order"

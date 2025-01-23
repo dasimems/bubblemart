@@ -9,6 +9,7 @@ export type UserDetailsType = {
   createdAt?: Date;
   updatedAt?: Date;
   avatar?: string;
+  id: string;
 };
 
 type UserStoreType = {
@@ -24,7 +25,7 @@ type UserStoreType = {
 const initialValue = {
   userDetails: null,
   userToken: null,
-  fetchingUserDetailsError: null
+  fetchingUserDetailsError: null,
 };
 
 const useUserStore = create<UserStoreType>((set) => ({
@@ -40,7 +41,7 @@ const useUserStore = create<UserStoreType>((set) => ({
   },
   clearStore: () => {
     set(initialValue);
-  }
+  },
 }));
 
 export default useUserStore;
