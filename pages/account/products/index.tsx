@@ -2,7 +2,7 @@ import AccountContentLayout from "@/components/layouts/AccountContentLayout";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import useProduct from "@/hooks/useProduct";
-import { ProductDetailsType } from "@/store/useProductStore";
+import { ProductDetailsType, ProductType } from "@/store/useProductStore";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 const Products = () => {
   const { query } = useRouter();
   let { type } = query;
-  if (!type) {
+  if (!type || (type && type !== "gift" && type !== "log")) {
     type = "log";
   }
   const tableContentClassname = "text-sm py-4";
@@ -28,7 +28,7 @@ const Products = () => {
     fetchingLogProductsError,
     isNextGiftProductLoading,
     isNextLogProductLoading,
-    getProducts
+    getProducts,
   } = useProduct();
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const Products = () => {
     logProducts,
     giftProducts,
     fetchingLogProductsError,
-    fetchingGiftProductsError
+    fetchingGiftProductsError,
   ]);
 
   return (
@@ -136,7 +136,10 @@ const Products = () => {
       {productsFetchingError && (
         <ErrorContainer
           error={productsFetchingError}
-          retryFunction={getProducts}
+          retryFunction={() => {
+            getProducts(type as ProductType);
+            setProductsFetchingError(null);
+          }}
         />
       )}
     </AccountContentLayout>

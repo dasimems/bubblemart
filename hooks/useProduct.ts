@@ -1,7 +1,7 @@
 import { getData } from "@/api";
 import useProductStore, {
   ProductDetailsType,
-  ProductType
+  ProductType,
 } from "@/store/useProductStore";
 import { constructErrorMessage } from "@/utils/functions";
 import { useCallback } from "react";
@@ -16,6 +16,13 @@ const useProduct = () => {
   } = useProductStore();
   const getProducts = useCallback(
     async (type: ProductType = "gift") => {
+      if (type === "gift") {
+        setFetchingGiftProductsError();
+      }
+
+      if (type === "log") {
+        setFetchingLogProductsError();
+      }
       try {
         const { data } = await getData<
           ApiCallResponseType<ProductDetailsType[]>
@@ -23,11 +30,9 @@ const useProduct = () => {
         const { data: content } = data;
         if (type === "gift") {
           setGiftProducts(content);
-          setFetchingGiftProductsError();
         }
         if (type === "log") {
           setLogProducts(content);
-          setFetchingLogProductsError();
         }
       } catch (error) {
         if (type === "gift") {
@@ -52,7 +57,7 @@ const useProduct = () => {
       setGiftProducts,
       setLogProducts,
       setFetchingLogProductsError,
-      setFetchingGiftProductsError
+      setFetchingGiftProductsError,
     ]
   );
   return { getProducts, setGiftProducts, setLogProducts, ...details };
