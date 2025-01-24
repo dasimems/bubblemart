@@ -2,6 +2,7 @@ import AccountContentLayout from "@/components/layouts/AccountContentLayout";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import useCustomers from "@/hooks/useCustomers";
+import useUser from "@/hooks/useUser";
 import React, { use, useEffect } from "react";
 
 const Users = () => {
@@ -10,11 +11,14 @@ const Users = () => {
   const tableHeadTextStyle = `${tableContentClassname} font-medium text-center`;
   const tableLoadingContentStyle = `${tableContentClassname} px-2`;
 
+  const { userToken } = useUser();
   const { customers, fetchingCustomersError, getCustomers } = useCustomers();
 
   useEffect(() => {
-    getCustomers();
-  }, [getCustomers]);
+    if (userToken) {
+      getCustomers();
+    }
+  }, [getCustomers, userToken]);
 
   return (
     <AccountContentLayout>

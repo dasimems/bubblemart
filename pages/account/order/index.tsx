@@ -2,6 +2,7 @@ import AccountContentLayout from "@/components/layouts/AccountContentLayout";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import useCustomerOrder from "@/hooks/useCustomerOrder";
+import useUser from "@/hooks/useUser";
 import React, { use, useEffect } from "react";
 
 const Payments = () => {
@@ -9,12 +10,14 @@ const Payments = () => {
   const loadingClassName = "animate-pulse h-3 bg-slate-300 rounded-md";
   const tableHeadTextStyle = `${tableContentClassname} font-medium text-center`;
   const tableLoadingContentStyle = `${tableContentClassname} px-2`;
-
+  const { userToken } = useUser();
   const { orders, fetchingOrderError, getOrders } = useCustomerOrder();
 
   useEffect(() => {
-    getOrders();
-  }, [getOrders]);
+    if (userToken) {
+      getOrders();
+    }
+  }, [getOrders, userToken]);
 
   return (
     <AccountContentLayout>

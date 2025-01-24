@@ -33,7 +33,7 @@ export default function App({ Component, pageProps }: AppEngineProps) {
     aos.init({
       once: true,
       easing: "ease-in-out",
-      duration: 1000
+      duration: 1000,
     });
   }, []);
   return (
@@ -46,19 +46,21 @@ export default function App({ Component, pageProps }: AppEngineProps) {
         imageDescription={Component?.imageDescription}
         locale={Component?.locale}
       />
-      {!isAccountRoute && (
-        <ApplicationWrapper>
-          {!Component.hideNav && !isAuthRoute && <Nav />}
-          <Component {...pageProps} />
-          {!Component.hideFooter && !isAuthRoute && <Footer />}
-        </ApplicationWrapper>
-      )}
+      <ApplicationWrapper>
+        {!isAccountRoute && (
+          <>
+            {!Component.hideNav && !isAuthRoute && <Nav />}
+            <Component {...pageProps} />
+            {!Component.hideFooter && !isAuthRoute && <Footer />}
+          </>
+        )}
+        {isAccountRoute && (
+          <AccountLayout>
+            <Component {...pageProps} />
+          </AccountLayout>
+        )}
+      </ApplicationWrapper>
 
-      {isAccountRoute && (
-        <AccountLayout>
-          <Component {...pageProps} />
-        </AccountLayout>
-      )}
       <CustomToast />
     </>
   );

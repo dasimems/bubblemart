@@ -2,6 +2,7 @@ import AccountContentLayout from "@/components/layouts/AccountContentLayout";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import useProduct from "@/hooks/useProduct";
+import useUser from "@/hooks/useUser";
 import { ProductDetailsType, ProductType } from "@/store/useProductStore";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -21,6 +22,8 @@ const Products = () => {
   const [productsFetchingError, setProductsFetchingError] = useState<
     string | null
   >(null);
+
+  const { userToken } = useUser();
   const {
     giftProducts,
     logProducts,
@@ -34,15 +37,17 @@ const Products = () => {
   useEffect(() => {
     setProducts(null);
 
-    if (type) {
-      if (type === "gift" && !giftProducts) {
-        getProducts("gift");
-      }
-      if (type === "log" && !logProducts) {
-        getProducts("log");
+    if (userToken) {
+      if (type) {
+        if (type === "gift" && !giftProducts) {
+          getProducts("gift");
+        }
+        if (type === "log" && !logProducts) {
+          getProducts("log");
+        }
       }
     }
-  }, [type, giftProducts, logProducts, getProducts]);
+  }, [type, giftProducts, logProducts, getProducts, userToken]);
 
   useEffect(() => {
     if (type) {

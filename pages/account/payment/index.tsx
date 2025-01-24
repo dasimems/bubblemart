@@ -2,6 +2,7 @@ import AccountContentLayout from "@/components/layouts/AccountContentLayout";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import usePayments from "@/hooks/usePayments";
+import useUser from "@/hooks/useUser";
 import React, { use, useEffect } from "react";
 
 const Payments = () => {
@@ -10,11 +11,14 @@ const Payments = () => {
   const tableHeadTextStyle = `${tableContentClassname} font-medium text-center`;
   const tableLoadingContentStyle = `${tableContentClassname} px-2`;
 
+  const { userToken } = useUser();
   const { payments, fetchingPaymentsError, getPayments } = usePayments();
 
   useEffect(() => {
-    getPayments();
-  }, [getPayments]);
+    if (userToken) {
+      getPayments();
+    }
+  }, [getPayments, userToken]);
 
   return (
     <AccountContentLayout>
