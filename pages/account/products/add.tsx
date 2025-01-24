@@ -1,4 +1,4 @@
-import { postData } from "@/api";
+import { deleteData, postData } from "@/api";
 import Button from "@/components/Button";
 import InputField from "@/components/general/InputField";
 import SelectBox from "@/components/general/SelectBox";
@@ -38,7 +38,7 @@ const defaultValues: AddProductBodyType = {
   amount: 0,
   image: "",
   description: "",
-  log: [],
+  log: []
 };
 
 const isImageFile = (file: File) => {
@@ -61,9 +61,10 @@ const Add = () => {
   const [logs, setLogs] = useState<LogBodyType[]>([
     {
       email: "",
-      password: "",
-    },
+      password: ""
+    }
   ]);
+
   const { setLogProducts, setGiftProducts, giftProducts, logProducts } =
     useProduct();
   let { type } = query as { type?: ProductType };
@@ -79,10 +80,18 @@ const Add = () => {
     setValue,
     watch,
     reset,
-    control,
+    control
   } = useForm({
     defaultValues,
+    mode: "onChange"
   });
+
+  const clearAllCachedImages = useCallback(() => {
+    setValue("image", "");
+    setFailedFileUpload(null);
+    setUploadingFileContent(null);
+    setUploadingPercentage(0);
+  }, [setValue]);
 
   const selectedType = watch("type");
   const handlePush = useCallback(() => {
@@ -125,10 +134,7 @@ const Add = () => {
         toast.error("Please select an image to upload");
         return;
       }
-      setValue("image", "");
-      setUploadingFileContent(null);
-      setUploadingPercentage(0);
-      setFailedFileUpload(null);
+      clearAllCachedImages();
       const file = files.item(0);
 
       if (!file) {
@@ -157,7 +163,7 @@ const Add = () => {
               )
             );
           },
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "multipart/form-data" }
         });
         setValue("image", data?.data?.link);
         setUploadingFileContent(null);
@@ -166,14 +172,14 @@ const Add = () => {
       } catch (error) {
         setError("image", {
           type: "validate",
-          message: "Could not upload image",
+          message: "Could not upload image"
         });
         toast.error("Could not upload image");
         setUploadingPercentage(0);
         setFailedFileUpload(files);
       }
     },
-    [setError, setValue]
+    [setError, setValue, clearAllCachedImages]
   );
 
   const onUpload = useCallback(
@@ -190,6 +196,21 @@ const Add = () => {
     [uploadAttachment, setValue]
   );
 
+  const deletingImage = useCallback(async (path: string) => {
+    try {
+      await deleteData("/upload", {
+        data: { path }
+      });
+    } catch (error) {
+      toast.error(
+        constructErrorMessage(
+          error as ApiErrorResponseType,
+          "Unknown error occurred whilst fetching order!"
+        )
+      );
+    }
+  }, []);
+
   const addProduct = useCallback(
     async (productBody: AddProductBodyType) => {
       const { type } = productBody;
@@ -200,10 +221,10 @@ const Add = () => {
         >("/product", productBody);
         const { data: content } = data;
         if (type === "gift") {
-          setGiftProducts([...(giftProducts || []), content]);
+          setGiftProducts([content, ...(giftProducts || [])]);
         }
         if (type === "log") {
-          setLogProducts([...(logProducts || []), content]);
+          setLogProducts([content, ...(logProducts || [])]);
         }
         toast.success("Product added successfully");
         reset(defaultValues);
@@ -224,7 +245,7 @@ const Add = () => {
       setIsFirstLoad(false);
       reset({
         ...defaultValues,
-        type,
+        type
       });
     }
   }, [type, reset, selectedType, isFirstLoad]);
@@ -234,6 +255,10 @@ const Add = () => {
       handlePush();
     }
   }, [selectedType, type, handlePush, isFirstLoad]);
+
+  useEffect(() => {
+    setValue("type", type);
+  }, [type, setValue]);
 
   return (
     <AccountContentLayout>
@@ -248,16 +273,16 @@ const Add = () => {
             options={[
               {
                 value: "log",
-                label: "Log",
+                label: "Log"
               },
               {
                 value: "gift",
-                label: "Gifts",
-              },
+                label: "Gifts"
+              }
             ]}
             placeholder="Select product type"
             {...register("type", {
-              required: "Please select product type",
+              required: "Please select product type"
             })}
             error={errors?.type?.message}
           />
@@ -275,30 +300,36 @@ const Add = () => {
                 min: {
                   value: 1,
                   message:
-                    "Your must have at least one of this product to be able to add to cart",
+                    "Your must have at least one of this product to be able to add to cart"
                 },
-                valueAsNumber: true,
+                valueAsNumber: true
               })}
               error={errors?.quantity?.message}
             />
           )}
           <InputField
             label="Amount"
+            leftIcon={
+              <button type="button" className="border-r border-slate-300 pr-3">
+                ₦
+              </button>
+            }
+            inputClassName="pl-14"
             placeholder="Product price"
             {...register("amount", {
               required: "Please provide your price",
               min: {
                 value: 10,
-                message: "Your price must not be less than ₦10",
+                message: "Your price must not be less than ₦10"
               },
-              valueAsNumber: true,
+              valueAsNumber: true
             })}
             error={errors?.amount?.message}
           />
           <TextArea
             label="Description"
             {...register("description", {
-              required: "Please provide product description",
+              required: "Please provide product description"
             })}
             error={errors?.description?.message}
           />
@@ -306,7 +337,7 @@ const Add = () => {
             name="image"
             control={control}
             rules={{
-              required: "Please upload your image",
+              required: "Please upload your image"
             }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <div className="flex flex-col gap-2">
@@ -360,10 +391,10 @@ const Add = () => {
                           aria-label="remove image"
                           title="remove-image"
                           onClick={() => {
-                            setValue("image", "");
-                            setUploadingFileContent(null);
-                            setUploadingPercentage(0);
-                            setFailedFileUpload(null);
+                            clearAllCachedImages();
+                            if (value) {
+                              deletingImage(value);
+                            }
                           }}
                           className="absolute -top-1 rounded-full -right-1 text-xs text-white bg-red-600 z-30"
                         >
@@ -395,10 +426,7 @@ const Add = () => {
                               title="reselect image"
                               aria-label="reselect image"
                               onClick={() => {
-                                setValue("image", "");
-                                setUploadingFileContent(null);
-                                setUploadingPercentage(0);
-                                setFailedFileUpload(null);
+                                clearAllCachedImages();
                               }}
                             >
                               Re-upload image
@@ -438,7 +466,7 @@ const Add = () => {
                         ?.value;
                       changeValue(index, {
                         email: inputtedValue,
-                        password,
+                        password
                       });
                     }}
                   />
@@ -451,7 +479,7 @@ const Add = () => {
                         ?.value;
                       changeValue(index, {
                         email,
-                        password: inputtedValue,
+                        password: inputtedValue
                       });
                     }}
                   />
@@ -468,13 +496,15 @@ const Add = () => {
             >
               Add
             </Button>
-            <Button
-              type="button"
-              buttonType="default"
-              className="border-primary border bg-transparent"
-            >
-              Add log
-            </Button>
+            {type === "log" && (
+              <Button
+                type="button"
+                buttonType="default"
+                className="border-primary border bg-transparent"
+              >
+                Add log
+              </Button>
+            )}
           </div>
         </form>
       </div>

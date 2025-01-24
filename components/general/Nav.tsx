@@ -5,7 +5,14 @@ import { AvatarImage, WrittenLogo } from "@/assets/images";
 import { siteName } from "@/utils/variables";
 import Link from "next/link";
 import Button from "../Button";
-import { FileText, LogOut, Menu, ShoppingBag, X } from "lucide-react";
+import {
+  FileText,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  ShoppingBag,
+  X
+} from "lucide-react";
 import useUser from "@/hooks/useUser";
 import { useRouter } from "next/router";
 
@@ -145,6 +152,19 @@ const Nav = () => {
                 </button>
                 {isAccountMenuOpened && (
                   <ul className="absolute top-[4.5rem] right-0 items-start flex flex-col gap-1 w-full min-w-[15rem] bg-slate-100 shadow-lg rounded-md">
+                    {userDetails?.role === "ADMIN" && (
+                      <li className="w-full bg-secondary-950">
+                        <Link
+                          className="w-full flex items-center gap-2 hover:bg-primary-900 hover:pl-7 duration-300 py-3 px-5"
+                          href="/account"
+                        >
+                          <span className="opacity-70">
+                            <LayoutDashboard size={14} />
+                          </span>
+                          <span>Dashboard</span>
+                        </Link>
+                      </li>
+                    )}
                     <li className="w-full">
                       <Link
                         className="w-full flex items-center gap-2 hover:bg-primary-900 hover:pl-7 duration-300 py-3 px-5"
@@ -217,7 +237,7 @@ const Nav = () => {
         <div
           className="absolute top-full w-full left-0 overflow-hidden duration-300 transition-all"
           style={{
-            height: `${menuHeight}px`,
+            height: `${menuHeight}px`
           }}
         >
           <ul
