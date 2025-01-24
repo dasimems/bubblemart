@@ -41,6 +41,14 @@ const defaultValues: AddProductBodyType = {
   log: [],
 };
 
+const isImageFile = (file: File) => {
+  // List of valid image MIME types
+  const validImageMimeTypes = ["image/jpeg", "image/png"];
+
+  // Check if the file has a valid image MIME type
+  return !!file && validImageMimeTypes.includes(file.type);
+};
+
 const Add = () => {
   const { query, push, pathname } = useRouter();
   const [uploadingFileContent, setUploadingFileContent] = useState<
@@ -121,8 +129,17 @@ const Add = () => {
       setUploadingFileContent(null);
       setUploadingPercentage(0);
       setFailedFileUpload(null);
+      const file = files.item(0);
 
-      const file = files[0];
+      if (!file) {
+        toast.error("Please select an image to upload");
+        return;
+      }
+
+      if (!isImageFile(file)) {
+        toast.error("Please upload an image file");
+        return;
+      }
 
       try {
         const result = await toBase64(file);
