@@ -8,7 +8,8 @@ import useProduct from "@/hooks/useProduct";
 import { ProductDetailsType, ProductType } from "@/store/useProductStore";
 import { constructErrorMessage } from "@/utils/functions";
 import { Trash } from "iconsax-react";
-import { TrashIcon, UploadCloud } from "lucide-react";
+import { CircleAlert, TrashIcon, UploadCloud, X } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -37,16 +38,23 @@ const defaultValues: AddProductBodyType = {
   amount: 0,
   image: "",
   description: "",
-  log: []
+  log: [],
 };
 
 const Add = () => {
   const { query, push, pathname } = useRouter();
+  const [uploadingFileContent, setUploadingFileContent] = useState<
+    string | null
+  >(null);
+  const [uploadingPercentage, setUploadingPercentage] = useState<number>(0);
+  const [failedFileUpload, setFailedFileUpload] = useState<FileList | null>(
+    null
+  );
   const [logs, setLogs] = useState<LogBodyType[]>([
     {
       email: "",
-      password: ""
-    }
+      password: "",
+    },
   ]);
   const { setLogProducts, setGiftProducts, giftProducts, logProducts } =
     useProduct();
@@ -60,11 +68,12 @@ const Add = () => {
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
     setError,
+    setValue,
     watch,
     reset,
-    control
+    control,
   } = useForm({
-    defaultValues
+    defaultValues,
   });
 
   const selectedType = watch("type");
@@ -85,7 +94,84 @@ const Add = () => {
     []
   );
 
-  const uploadAttachment = useCallback(() => {}, []);
+  const toBase64 = (file: Blob) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+    });
+
+  const uploadAttachment = useCallback(
+    async (files: FileList) => {
+      if (!files) {
+        toast.error("Could not find image to upload");
+        return;
+      }
+
+      if (files.length > 1) {
+        toast.error("You can only upload one image at a time");
+        return;
+      }
+      if (files.length < 1) {
+        toast.error("Please select an image to upload");
+        return;
+      }
+      setValue("image", "");
+      setUploadingFileContent(null);
+      setUploadingPercentage(0);
+      setFailedFileUpload(null);
+
+      const file = files[0];
+
+      try {
+        const result = await toBase64(file);
+        setUploadingFileContent(result as string);
+        const formData = new FormData();
+        formData.append("image", file);
+        const { data } = await postData<
+          FormData,
+          ApiCallResponseType<{ link: string }>
+        >("/upload", formData, {
+          onUploadProgress: (progressEvent) => {
+            setUploadingPercentage(
+              Math.round(
+                (progressEvent.loaded * 100) / (progressEvent?.total || 0)
+              )
+            );
+          },
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setValue("image", data?.data?.link);
+        setUploadingFileContent(null);
+        setUploadingPercentage(0);
+        setFailedFileUpload(null);
+      } catch (error) {
+        setError("image", {
+          type: "validate",
+          message: "Could not upload image",
+        });
+        toast.error("Could not upload image");
+        setUploadingPercentage(0);
+        setFailedFileUpload(files);
+      }
+    },
+    [setError, setValue]
+  );
+
+  const onUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { files } = e.currentTarget;
+      if (!files) {
+        toast.error("Could not find image to upload");
+        return;
+      }
+      setValue("image", "");
+      uploadAttachment(files);
+      // show success message on file upload
+    },
+    [uploadAttachment, setValue]
+  );
 
   const addProduct = useCallback(
     async (productBody: AddProductBodyType) => {
@@ -121,7 +207,7 @@ const Add = () => {
       setIsFirstLoad(false);
       reset({
         ...defaultValues,
-        type
+        type,
       });
     }
   }, [type, reset, selectedType, isFirstLoad]);
@@ -145,16 +231,16 @@ const Add = () => {
             options={[
               {
                 value: "log",
-                label: "Log"
+                label: "Log",
               },
               {
                 value: "gift",
-                label: "Gifts"
-              }
+                label: "Gifts",
+              },
             ]}
             placeholder="Select product type"
             {...register("type", {
-              required: "Please select product type"
+              required: "Please select product type",
             })}
             error={errors?.type?.message}
           />
@@ -172,9 +258,9 @@ const Add = () => {
                 min: {
                   value: 1,
                   message:
-                    "Your must have at least one of this product to be able to add to cart"
+                    "Your must have at least one of this product to be able to add to cart",
                 },
-                valueAsNumber: true
+                valueAsNumber: true,
               })}
               error={errors?.quantity?.message}
             />
@@ -186,16 +272,16 @@ const Add = () => {
               required: "Please provide your price",
               min: {
                 value: 10,
-                message: "Your price must not be less than ₦10"
+                message: "Your price must not be less than ₦10",
               },
-              valueAsNumber: true
+              valueAsNumber: true,
             })}
             error={errors?.amount?.message}
           />
           <TextArea
             label="Description"
             {...register("description", {
-              required: "Please provide product description"
+              required: "Please provide product description",
             })}
             error={errors?.description?.message}
           />
@@ -203,29 +289,109 @@ const Add = () => {
             name="image"
             control={control}
             rules={{
-              required: "Please upload your image"
+              required: "Please upload your image",
             }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <div className="flex flex-col gap-2">
                 <p className="">Image</p>
-                <div className="border border-slate-400 border-dashed rounded-md h-[10rem] relative">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={uploadAttachment}
-                    title="Click or drag to upload"
-                    className="w-full h-full absolute top-0 left-0 opacity-0 z-10 cursor-pointer"
-                  />
-                  <div className="w-full h-full relative items-center justify-center p-5 flex flex-col gap-2">
-                    <UploadCloud className="opacity-60" />
-                    <p className="text-center opacity-60">
-                      Click or drag to upload
-                    </p>
+                {!value && !uploadingFileContent && (
+                  <div className="border border-slate-400 border-dashed rounded-md h-[10rem] relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={onUpload}
+                      title="Click or drag to upload"
+                      className="w-full h-full absolute top-0 left-0 opacity-0 z-10 cursor-pointer"
+                    />
+                    <div className="w-full h-full relative items-center justify-center p-5 flex flex-col gap-2">
+                      <UploadCloud className="opacity-60" />
+                      <p className="text-center opacity-60">
+                        Click or drag to upload
+                      </p>
+                    </div>
+                    {error?.message && (
+                      <p className="text-sm text-red-600">{error?.message}</p>
+                    )}
                   </div>
-                  {error?.message && (
-                    <p className="text-sm text-red-600">{error?.message}</p>
-                  )}
-                </div>
+                )}
+
+                {(uploadingFileContent || value) && (
+                  <>
+                    {!failedFileUpload && (
+                      <div className="relative  w-32 h-36">
+                        <div className="relative w-full h-full rounded-md overflow-hidden ">
+                          <Image
+                            src={uploadingFileContent || value}
+                            fill
+                            alt="product image"
+                            className="object-cover"
+                          />
+                          {!value && (
+                            <div className="w-full h-full absolute top-0 left-0 bg-black/70 z-20 flex flex-col text-xs items-center justify-center">
+                              <UploadCloud className="opacity-60 text-white" />
+                              <p className="text-center opacity-70 text-white">
+                                <span className="font-bold">
+                                  {uploadingPercentage}%
+                                </span>{" "}
+                                uploaded
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          aria-label="remove image"
+                          title="remove-image"
+                          onClick={() => {
+                            setValue("image", "");
+                            setUploadingFileContent(null);
+                            setUploadingPercentage(0);
+                            setFailedFileUpload(null);
+                          }}
+                          className="absolute -top-1 rounded-full -right-1 text-xs text-white bg-red-600 z-30"
+                        >
+                          <X className="" />
+                        </button>
+                      </div>
+                    )}
+                    {failedFileUpload && (
+                      <div className="border border-slate-400 border-dashed rounded-md h-[10rem] relative">
+                        <div className="w-full h-full relative items-center justify-center p-5 flex flex-col gap-2">
+                          <CircleAlert color="red" />
+                          <p className="text-center text-xs text-red-600">
+                            Could not upload image
+                          </p>
+                          <div className="flex items-center gap-2  text-sm ">
+                            <button
+                              type="button"
+                              title="retry"
+                              aria-label="retry"
+                              className="underline text-primary"
+                              onClick={() => uploadAttachment(failedFileUpload)}
+                            >
+                              Retry
+                            </button>
+                            <p className="no-underline text-black">/</p>
+                            <button
+                              type="button"
+                              className="underline text-primary"
+                              title="reselect image"
+                              aria-label="reselect image"
+                              onClick={() => {
+                                setValue("image", "");
+                                setUploadingFileContent(null);
+                                setUploadingPercentage(0);
+                                setFailedFileUpload(null);
+                              }}
+                            >
+                              Re-upload image
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             )}
           />
@@ -255,7 +421,7 @@ const Add = () => {
                         ?.value;
                       changeValue(index, {
                         email: inputtedValue,
-                        password
+                        password,
                       });
                     }}
                   />
@@ -268,7 +434,7 @@ const Add = () => {
                         ?.value;
                       changeValue(index, {
                         email,
-                        password: inputtedValue
+                        password: inputtedValue,
                       });
                     }}
                   />
@@ -286,6 +452,7 @@ const Add = () => {
               Add
             </Button>
             <Button
+              type="button"
               buttonType="default"
               className="border-primary border bg-transparent"
             >
