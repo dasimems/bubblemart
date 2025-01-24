@@ -4,6 +4,7 @@ import { constructErrorMessage } from "@/utils/functions";
 import { useCallback } from "react";
 import useAuth from "./useAuth";
 import { deleteSavedToken } from "@/localservices";
+import { toast } from "react-toastify";
 
 const useUser = () => {
   const {
@@ -18,6 +19,7 @@ const useUser = () => {
       setHeaderAuthorization();
       clearStore();
       deleteSavedToken();
+      toast.success("Logged out successfully!");
     } catch (error) {
       // perform any preaction operations
     }

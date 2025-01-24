@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdCancel } from "react-icons/md";
+import { toast } from "react-toastify";
 
 export type LoginBodyType = {
   email: string;
@@ -22,7 +23,7 @@ const defaultValues: LoginBodyType = {
   email: "",
   password: "",
   confirmPassword: "",
-  name: ""
+  name: "",
 };
 
 const Register = () => {
@@ -34,10 +35,10 @@ const Register = () => {
     reset,
     setError,
     watch,
-    formState: { isSubmitting, isValid, errors }
+    formState: { isSubmitting, isValid, errors },
   } = useForm<LoginBodyType>({
     defaultValues,
-    mode: "onChange"
+    mode: "onChange",
   });
 
   const password = watch("password");
@@ -47,6 +48,7 @@ const Register = () => {
       setRegisterError(null);
       try {
         await postData("/auth/register", data);
+        toast.success("Registered successfully! Please login to continue");
         reset(defaultValues);
         push("/auth/login");
       } catch (error) {
@@ -98,7 +100,7 @@ const Register = () => {
           placeholder="Full name"
           error={errors?.name?.message}
           {...register("name", {
-            required: "Please provide your name"
+            required: "Please provide your name",
           })}
         />
         <InputField
@@ -107,7 +109,7 @@ const Register = () => {
           type="email"
           error={errors?.email?.message}
           {...register("email", {
-            required: "Please provide your email"
+            required: "Please provide your email",
           })}
         />
         <InputField
@@ -120,12 +122,12 @@ const Register = () => {
             pattern: {
               value: passwordRegExp,
               message:
-                "Your password must contain at least 1 uppercase, 1 lowercase, and 1 special character"
+                "Your password must contain at least 1 uppercase, 1 lowercase, and 1 special character",
             },
             minLength: {
               value: 8,
-              message: "Your password must be of 8 or more character"
-            }
+              message: "Your password must be of 8 or more character",
+            },
           })}
         />
         <InputField
@@ -138,7 +140,7 @@ const Register = () => {
             validate: (value) =>
               value === password
                 ? undefined
-                : "Your repeated password doesn't match"
+                : "Your repeated password doesn't match",
           })}
         />
         <p className="font-bold opacity-60">
