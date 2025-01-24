@@ -67,12 +67,20 @@ const Nav = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/reviews" className="text-primary">
+                <Link
+                  target="_blank"
+                  href="https://www.instagram.com/bubblemart_sma"
+                  className="text-primary"
+                >
                   Reviews
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-primary">
+                <Link
+                  target="_blank"
+                  href="https://wa.me/message/7L2YDAYBOR4JI1"
+                  className="text-primary"
+                >
                   Contact Us
                 </Link>
               </li>
@@ -209,7 +217,7 @@ const Nav = () => {
         <div
           className="absolute top-full w-full left-0 overflow-hidden duration-300 transition-all"
           style={{
-            height: `${menuHeight}px`
+            height: `${menuHeight}px`,
           }}
         >
           <ul
