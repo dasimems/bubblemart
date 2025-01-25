@@ -50,7 +50,9 @@ const Login = () => {
           performAuthOperations(auth?.token);
           toast("Login successful");
           if (redirect) {
-            return push(redirect?.toString());
+            setTimeout(() => {
+              return push(redirect?.toString());
+            }, 150);
           }
         }
       } catch (error) {

@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import useAuth from "./useAuth";
 import { deleteSavedToken } from "@/localservices";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const useUser = () => {
   const {
@@ -13,13 +14,17 @@ const useUser = () => {
     clearStore,
     ...details
   } = useUserStore();
+  const { push } = useRouter();
 
   const logoutUser = useCallback(() => {
     try {
-      setHeaderAuthorization();
-      clearStore();
-      deleteSavedToken();
-      toast.success("Logged out successfully!");
+      push("/");
+      setTimeout(() => {
+        setHeaderAuthorization();
+        clearStore();
+        deleteSavedToken();
+        toast.success("Logged out successfully!");
+      }, 50);
     } catch (error) {
       // perform any preaction operations
     }

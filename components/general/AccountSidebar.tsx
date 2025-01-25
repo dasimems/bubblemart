@@ -1,4 +1,5 @@
 import { WrittenLogo } from "@/assets/images";
+import useUser from "@/hooks/useUser";
 import { siteName } from "@/utils/variables";
 import { LogOut } from "lucide-react";
 import Image from "next/image";
@@ -109,6 +110,7 @@ const LinkDropDownContainer: React.FC<{
 };
 
 const AccountSidebar = () => {
+  const { logoutUser } = useUser();
   return (
     <div className="w-72 hidden md:flex flex-col h-screen overflow-auto gap-10">
       <div className="h-16 flex items-center justify-center  px-6">
@@ -160,7 +162,10 @@ const AccountSidebar = () => {
         />
       </div>
       <div className="pt-20 pb-6 border-t px-6">
-        <button className="inline-flex items-center gap-2 hover:text-red-500">
+        <button
+          onClick={logoutUser}
+          className="inline-flex items-center gap-2 hover:text-red-500"
+        >
           <span>
             <LogOut />
           </span>
