@@ -158,7 +158,10 @@ const Register = () => {
         <div className="text-center">
           <p>
             Already have an account?{" "}
-            <Link href={"/auth/login"} className="underline font-medium">
+            <Link
+              href={`/auth/login${redirect ? `?redirect=${redirect}` : ""}`}
+              className="underline font-medium"
+            >
               Login
             </Link>
           </p>

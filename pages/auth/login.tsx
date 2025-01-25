@@ -120,7 +120,10 @@ const Login = () => {
         <div className="text-center">
           <p>
             Don&apos;t have an account?{" "}
-            <Link href={"/auth/register"} className="underline font-medium">
+            <Link
+              href={`/auth/register${redirect ? `?redirect=${redirect}` : ""}`}
+              className="underline font-medium"
+            >
               Sign Up
             </Link>
           </p>
