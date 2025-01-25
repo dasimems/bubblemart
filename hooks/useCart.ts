@@ -8,6 +8,7 @@ const useCart = () => {
     useCartStore();
   const getCart = useCallback(async () => {
     setCartFetchingError();
+
     try {
       const { data } = await getData<
         ApiCallResponseType<{
@@ -26,7 +27,7 @@ const useCart = () => {
         )
       );
     }
-  }, [setCarts, setCartFetchingError]);
+  }, [setCarts, setCartFetchingError, setCartNeedAddress]);
 
   return { getCart, ...details };
 };
