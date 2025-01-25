@@ -32,7 +32,7 @@ const ProductCard: React.FC<
   totalPrice
 }) => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const { push } = useRouter();
+  const { push, pathname } = useRouter();
   const { userToken, userDetails } = useUser();
   const [hasUpdatedPerfumeCount, setHasUpdatedPerfumeCount] = useState(false);
   const [productCount, setProductCount] = useState(1);
@@ -68,7 +68,7 @@ const ProductCard: React.FC<
   const updateProduct = useCallback(
     async (quantity: number) => {
       if (!userToken) {
-        return push("/auth/login?redirect=/");
+        return push(`/auth/login?redirect=${pathname}`);
       }
       if (!id) {
         return;
@@ -96,7 +96,7 @@ const ProductCard: React.FC<
         setHasUpdatedPerfumeCount(false);
       }
     },
-    [id, userToken, push, name]
+    [id, userToken, push, name, pathname, cartQuantity]
   );
 
   const debouncedUpdateCart = useDebouncedCallback(
@@ -192,7 +192,7 @@ const ProductCard: React.FC<
             />
             <Button
               loading={isAddingToCart}
-              disabled={!userDetails}
+              disabled={!!userToken && !userDetails}
               onClick={addProductToCart}
               buttonType="primary"
               className="text-white text-center !rounded-full"
