@@ -30,7 +30,7 @@ const useAuth = () => {
 
   const loadApp = useCallback(async () => {
     try {
-      const token = await getSavedToken();
+      const token = getSavedToken();
       if (token) {
         performAuthOperations(token, false);
       }

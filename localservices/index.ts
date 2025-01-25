@@ -1,4 +1,4 @@
-export const saveToken = async (token: string) => {
+export const saveToken = (token: string) => {
   // const encryptedToken = encrypt(token, process.env.NEXT_PUBLIC_TOKEN_ENCRYPTION_KEY ?? "");
   return localStorage.setItem(
     process.env.NEXT_PUBLIC_LOCAL_STORAGE_TOKEN_KEY ?? "",
@@ -6,7 +6,7 @@ export const saveToken = async (token: string) => {
   );
 };
 
-export const getSavedToken = async () => {
+export const getSavedToken = () => {
   const savedToken = localStorage.getItem(
     process.env.NEXT_PUBLIC_LOCAL_STORAGE_TOKEN_KEY ?? ""
   );

@@ -5,6 +5,7 @@ import useUser from "@/hooks/useUser";
 import Spinner from "../general/Spinner";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
+import { getSavedToken } from "@/localservices";
 
 export type AccountLayoutProp = {
   children: React.ReactNode;
@@ -24,8 +25,11 @@ const AccountLayout: React.FC<AccountLayoutProp> = ({ children }) => {
   }, [push]);
 
   useEffect(() => {
-    if (!userToken) {
-      redirectToLogin();
+    if (window) {
+      const savedToken = getSavedToken();
+      if (!userToken && !savedToken) {
+        redirectToLogin();
+      }
     }
   }, [userToken, redirectToLogin]);
 

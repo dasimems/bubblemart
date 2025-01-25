@@ -41,12 +41,13 @@ const Cart = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-start">
             <div className="flex flex-col gap-10">
               {carts &&
-                carts.map(({ productDetails, id, quantity }) => (
+                carts.map(({ productDetails, id, quantity, totalPrice }) => (
                   <ProductCard
                     {...productDetails}
                     key={id}
                     isCart
                     cartQuantity={quantity}
+                    totalPrice={totalPrice}
                   />
                 ))}
 
