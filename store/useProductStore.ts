@@ -8,6 +8,8 @@ export type ProductDetailsType = {
   type: ProductType;
   quantity: number;
   amount: AmountType;
+  createdAt: Date;
+  totalSales: number;
   image: string;
   description: string;
 };
@@ -26,6 +28,7 @@ export type ProductStoreType = {
   setLogProducts: (product: ProductDetailsType[] | null) => void;
   setFetchingLogProductsError: (error?: string | null) => void;
   isLoadingNextLogProducts: () => void;
+  removeProduct: (id: string) => void;
 };
 
 const initialValues = {
@@ -58,6 +61,16 @@ const useProductStore = create<ProductStoreType>((set) => ({
   },
   isLoadingNextLogProducts: () => {
     set({ isNextLogProductLoading: true });
+  },
+  removeProduct: (id: string) => {
+    set((prevState) => ({
+      logProducts: prevState?.logProducts?.filter(
+        (product) => product?.id !== id
+      ),
+      giftProducts: prevState?.logProducts?.filter(
+        (product) => product?.id !== id
+      )
+    }));
   }
 }));
 

@@ -43,7 +43,12 @@ const defaultValues: AddProductBodyType = {
 
 const isImageFile = (file: File) => {
   // List of valid image MIME types
-  const validImageMimeTypes = ["image/jpeg", "image/png"];
+  const validImageMimeTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/bmp"
+  ];
 
   // Check if the file has a valid image MIME type
   return !!file && validImageMimeTypes.includes(file.type);
@@ -65,8 +70,13 @@ const Add = () => {
     }
   ]);
 
-  const { setLogProducts, setGiftProducts, giftProducts, logProducts } =
-    useProduct();
+  const {
+    setLogProducts,
+    setGiftProducts,
+    giftProducts,
+    logProducts,
+    getProducts
+  } = useProduct();
   let { type } = query as { type?: ProductType };
   if (!type || (type !== "log" && type !== "gift")) {
     type = "log";
@@ -227,7 +237,7 @@ const Add = () => {
           setLogProducts([content, ...(logProducts || [])]);
         }
         toast.success("Product added successfully");
-        reset(defaultValues);
+        reset({ ...defaultValues, type });
       } catch (error) {
         toast.error(
           constructErrorMessage(
@@ -258,6 +268,7 @@ const Add = () => {
 
   useEffect(() => {
     setValue("type", type);
+    getProducts(type);
   }, [type, setValue]);
 
   return (
@@ -309,11 +320,7 @@ const Add = () => {
           )}
           <InputField
             label="Amount"
-            leftIcon={
-              <button type="button" className="border-r border-slate-300 pr-3">
-                ₦
-              </button>
-            }
+            leftIcon={<span className="border-r border-slate-300 pr-3">₦</span>}
             inputClassName="pl-14"
             placeholder="Product price"
             {...register("amount", {

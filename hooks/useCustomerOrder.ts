@@ -11,7 +11,7 @@ const useCustomerOrder = () => {
     setFetchingOrderError();
     try {
       const { data } = await getData<ApiCallResponseType<OrderDetailsType[]>>(
-        "/order?type=admin"
+        "/order?isAdmin=true"
       );
       const { data: content } = data;
       setOrders(content);

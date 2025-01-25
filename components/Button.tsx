@@ -66,7 +66,7 @@ const Button: React.FC<
       aria-label={buttonTitle ?? "mems system"}
       disabled={loading || disabled}
       type={type}
-      className={`${buttonStyleClassName} ${buttonSizeClassName} disabled:!cursor-not-allowed disabled:bg-[#C0C0C0] rounded-2xl py-3 px-5 ${
+      className={`${buttonStyleClassName} ${buttonSizeClassName} cursor-pointer disabled:!cursor-not-allowed disabled:bg-[#C0C0C0] rounded-2xl py-3 px-5 ${
         isSpecial ? "rounded-tl-none rounded-bl-3xl" : ""
       } ${className}`}
       {...props}
