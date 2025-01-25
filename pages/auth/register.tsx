@@ -23,11 +23,12 @@ const defaultValues: LoginBodyType = {
   email: "",
   password: "",
   confirmPassword: "",
-  name: "",
+  name: ""
 };
 
 const Register = () => {
-  const { push } = useRouter();
+  const { push, query } = useRouter();
+  const { redirect } = query;
   const [registerError, setRegisterError] = useState<string | null>(null);
   const {
     register,
@@ -35,10 +36,10 @@ const Register = () => {
     reset,
     setError,
     watch,
-    formState: { isSubmitting, isValid, errors },
+    formState: { isSubmitting, isValid, errors }
   } = useForm<LoginBodyType>({
     defaultValues,
-    mode: "onChange",
+    mode: "onChange"
   });
 
   const password = watch("password");
@@ -50,7 +51,7 @@ const Register = () => {
         await postData("/auth/register", data);
         toast.success("Registered successfully! Please login to continue");
         reset(defaultValues);
-        push("/auth/login");
+        push(`/auth/login?redirect=${redirect}`);
       } catch (error) {
         const errorsFromServer = (error as ApiErrorResponseType)?.response?.data
           ?.error;
@@ -72,7 +73,7 @@ const Register = () => {
         );
       }
     },
-    [push, reset, setError]
+    [push, reset, setError, redirect]
   );
   return (
     <AuthLayout
@@ -100,7 +101,7 @@ const Register = () => {
           placeholder="Full name"
           error={errors?.name?.message}
           {...register("name", {
-            required: "Please provide your name",
+            required: "Please provide your name"
           })}
         />
         <InputField
@@ -109,7 +110,7 @@ const Register = () => {
           type="email"
           error={errors?.email?.message}
           {...register("email", {
-            required: "Please provide your email",
+            required: "Please provide your email"
           })}
         />
         <InputField
@@ -122,12 +123,12 @@ const Register = () => {
             pattern: {
               value: passwordRegExp,
               message:
-                "Your password must contain at least 1 uppercase, 1 lowercase, and 1 special character",
+                "Your password must contain at least 1 uppercase, 1 lowercase, and 1 special character"
             },
             minLength: {
               value: 8,
-              message: "Your password must be of 8 or more character",
-            },
+              message: "Your password must be of 8 or more character"
+            }
           })}
         />
         <InputField
@@ -140,7 +141,7 @@ const Register = () => {
             validate: (value) =>
               value === password
                 ? undefined
-                : "Your repeated password doesn't match",
+                : "Your repeated password doesn't match"
           })}
         />
         <p className="font-bold opacity-60">

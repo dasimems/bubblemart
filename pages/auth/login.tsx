@@ -7,6 +7,7 @@ import useAuth from "@/hooks/useAuth";
 import { UserDetailsType } from "@/store/useUserStore";
 import { constructErrorMessage } from "@/utils/functions";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdCancel } from "react-icons/md";
@@ -23,6 +24,8 @@ const defaultValues: LoginBodyType = {
 };
 
 const Login = () => {
+  const { query, push } = useRouter();
+  const { redirect } = query;
   const [loginError, setLoginError] = useState<string | null>(null);
   const { performAuthOperations } = useAuth();
   const {
@@ -45,8 +48,11 @@ const Login = () => {
         const { auth } = data;
         if (auth) {
           performAuthOperations(auth?.token);
+          toast("Login successful");
+          if (redirect) {
+            return push(redirect?.toString());
+          }
         }
-        toast("Login successful");
       } catch (error) {
         setLoginError(
           constructErrorMessage(
@@ -56,7 +62,7 @@ const Login = () => {
         );
       }
     },
-    [performAuthOperations]
+    [performAuthOperations, redirect, push]
   );
   return (
     <AuthLayout
