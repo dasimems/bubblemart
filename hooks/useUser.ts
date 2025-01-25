@@ -24,7 +24,7 @@ const useUser = () => {
         clearStore();
         deleteSavedToken();
         toast.success("Logged out successfully!");
-      }, 50);
+      }, 100);
     } catch (error) {
       // perform any preaction operations
     }

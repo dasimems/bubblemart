@@ -52,7 +52,7 @@ const Login = () => {
           if (redirect) {
             setTimeout(() => {
               return push(redirect?.toString());
-            }, 150);
+            }, 100);
           }
         }
       } catch (error) {
