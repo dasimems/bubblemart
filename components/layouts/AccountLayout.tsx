@@ -6,6 +6,7 @@ import Spinner from "../general/Spinner";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { getSavedToken } from "@/localservices";
+import { toastIds } from "@/utils/variables";
 
 export type AccountLayoutProp = {
   children: React.ReactNode;
@@ -17,7 +18,9 @@ const AccountLayout: React.FC<AccountLayoutProp> = ({ children }) => {
 
   const redirectToLogin = useCallback(() => {
     push(`/auth/login?redirect=${asPath}`);
-    toast("Please login!");
+    toast("Please login!", {
+      toastId: toastIds.loginRedirect
+    });
   }, [push, asPath]);
 
   const redirectToHome = useCallback(() => {

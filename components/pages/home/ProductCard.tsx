@@ -5,7 +5,7 @@ import InputField from "@/components/general/InputField";
 import useUser from "@/hooks/useUser";
 import { ProductDetailsType } from "@/store/useProductStore";
 import { constructErrorMessage } from "@/utils/functions";
-import { siteName } from "@/utils/variables";
+import { siteName, toastIds } from "@/utils/variables";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -57,8 +57,11 @@ const ProductCard: React.FC<
       toast.error(
         constructErrorMessage(
           error as ApiErrorResponseType,
-          "Unknown error occurred whilst fetching order!"
-        )
+          "Unknown error occurred whilst adding to cart!"
+        ),
+        {
+          toastId: toastIds.addToCart
+        }
       );
     } finally {
       setIsAddingToCart(false);
@@ -88,8 +91,11 @@ const ProductCard: React.FC<
         toast.error(
           constructErrorMessage(
             error as ApiErrorResponseType,
-            "Unknown error occurred whilst fetching order!"
-          )
+            "Unknown error occurred whilst updating cart!"
+          ),
+          {
+            toastId: toastIds.addToCart
+          }
         );
       } finally {
         setIsAddingToCart(false);
@@ -177,7 +183,10 @@ const ProductCard: React.FC<
               rightIconAction={() => {
                 if (productCount === quantity) {
                   return toast(
-                    "You can't add more than the available quantity"
+                    "You can't add more than the available quantity",
+                    {
+                      toastId: toastIds.addToCartError
+                    }
                   );
                 }
                 setProductCount((prevState) =>

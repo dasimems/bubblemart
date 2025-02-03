@@ -4,6 +4,7 @@ import SectionContainer from "@/components/layouts/SectionContainer";
 // import ProductCard from "@/components/pages/home/ProductCard";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
+import protectRoute from "@/hooks/protectRoute";
 import useOrder from "@/hooks/useOrder";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -56,4 +57,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default protectRoute(Orders);

@@ -7,6 +7,7 @@ import SectionContainer from "@/components/layouts/SectionContainer";
 import ProductCard from "@/components/pages/home/ProductCard";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
+import protectRoute from "@/hooks/protectRoute";
 import useCart from "@/hooks/useCart";
 import useUser from "@/hooks/useUser";
 import { useRouter } from "next/router";
@@ -129,4 +130,4 @@ const Cart = () => {
   );
 };
 
-export default Cart;
+export default protectRoute(Cart);
