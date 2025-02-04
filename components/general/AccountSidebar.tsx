@@ -114,11 +114,13 @@ const AccountSidebar = () => {
   return (
     <div className="w-72 hidden md:flex flex-col h-screen overflow-auto gap-10">
       <div className="h-16 flex items-center justify-center  px-6">
-        <Image
-          src={WrittenLogo}
-          alt={`${siteName}-logo`}
-          className="w-full h-4 object-contain object-center"
-        />
+        <Link href={"/"} className="flex items-center gap-2">
+          <Image
+            src={WrittenLogo}
+            alt={`${siteName}-logo`}
+            className="w-full h-4 object-contain object-center"
+          />
+        </Link>
       </div>
       <div className="flex-1 flex flex-col gap-2 px-3">
         <LinkContainer
