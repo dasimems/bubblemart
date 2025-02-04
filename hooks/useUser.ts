@@ -6,6 +6,7 @@ import useAuth from "./useAuth";
 import { deleteSavedToken } from "@/localservices";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { toastIds } from "@/utils/variables";
 
 const useUser = () => {
   const {
@@ -16,24 +17,34 @@ const useUser = () => {
   } = useUserStore();
   const { push } = useRouter();
 
-  const logoutUser = useCallback(() => {
-    try {
-      push("/");
-      setTimeout(() => {
-        setHeaderAuthorization();
-        clearStore();
-        deleteSavedToken();
-        toast.success("Logged out successfully!");
-      }, 100);
-    } catch (error) {
-      // perform any preaction operations
-    }
-  }, [clearStore]);
+  const logoutUser = useCallback(
+    (isUnauthorized = false) => {
+      try {
+        push("/");
+        setTimeout(() => {
+          setHeaderAuthorization();
+          clearStore();
+          deleteSavedToken();
+          if (isUnauthorized) {
+            return toast.error("Please login again!", {
+              toastId: toastIds.login
+            });
+          }
+          toast.success("Logged out successfully!", {
+            toastId: toastIds.login
+          });
+        }, 100);
+      } catch (error) {
+        // perform any preaction operations
+      }
+    },
+    [clearStore, push]
+  );
 
   const validateError = useCallback(
     (error: ApiErrorResponseType) => {
       if (error?.status === 401) {
-        logoutUser();
+        logoutUser(true);
       }
     },
     [logoutUser]

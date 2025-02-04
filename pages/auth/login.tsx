@@ -6,6 +6,7 @@ import AuthLayout from "@/components/layouts/AuthLayout";
 import useAuth from "@/hooks/useAuth";
 import { UserDetailsType } from "@/store/useUserStore";
 import { constructErrorMessage } from "@/utils/functions";
+import { toastIds } from "@/utils/variables";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useCallback, useState } from "react";
@@ -48,7 +49,9 @@ const Login = () => {
         const { auth } = data;
         if (auth) {
           performAuthOperations(auth?.token);
-          toast("Login successful");
+          toast("Login successful", {
+            toastId: toastIds.login
+          });
           if (redirect) {
             setTimeout(() => {
               return push(redirect?.toString());
@@ -71,11 +74,15 @@ const Login = () => {
       SVGImage={LoginSvgImage}
       className="md:min-h-full flex flex-col items-center justify-center p-10"
     >
-      <div className="md:max-w-[27rem] w-full flex flex-col gap-6">
+      <form
+        onSubmit={handleSubmit(loginUser)}
+        className="md:max-w-[27rem] w-full flex flex-col gap-6"
+      >
         {loginError && (
           <div className="bg-red-100 rounded-md p-3 px-5 flex items-center justify-between">
             <p className="text-red-500">{loginError}</p>
             <button
+              type="button"
               onClick={() => {
                 setLoginError(null);
               }}
@@ -130,7 +137,7 @@ const Login = () => {
             </Link>
           </p>
         </div>
-      </div>
+      </form>
     </AuthLayout>
   );
 };

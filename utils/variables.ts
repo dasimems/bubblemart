@@ -3,5 +3,6 @@ export const siteName = "Bubblemart",
   toastIds = {
     loginRedirect: "login-redirect",
     addToCart: "add-to-cart",
-    addToCartError: "add-to-cart-error"
+    addToCartError: "add-to-cart-error",
+    login: "login"
   };

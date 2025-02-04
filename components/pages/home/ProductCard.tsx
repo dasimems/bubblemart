@@ -58,10 +58,7 @@ const ProductCard: React.FC<
         constructErrorMessage(
           error as ApiErrorResponseType,
           "Unknown error occurred whilst adding to cart!"
-        ),
-        {
-          toastId: toastIds.addToCart
-        }
+        )
       );
     } finally {
       setIsAddingToCart(false);
@@ -92,10 +89,7 @@ const ProductCard: React.FC<
           constructErrorMessage(
             error as ApiErrorResponseType,
             "Unknown error occurred whilst updating cart!"
-          ),
-          {
-            toastId: toastIds.addToCart
-          }
+          )
         );
       } finally {
         setIsAddingToCart(false);

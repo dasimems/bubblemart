@@ -95,7 +95,7 @@ const ProductDetails = () => {
     } finally {
       setOpenIsDeletingProductModal(false);
     }
-  }, [productId, push, productDetails]);
+  }, [productId, push, productDetails, removeProduct]);
 
   useEffect(() => {
     getProductDetails();

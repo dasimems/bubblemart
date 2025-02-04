@@ -76,7 +76,7 @@ const Products = () => {
         prevState?.filter((id) => id !== productToDelete?.id)
       );
     }
-  }, [productToDelete]);
+  }, [productToDelete, removeProduct]);
 
   useEffect(() => {
     setProducts(null);

@@ -5,6 +5,7 @@ import SelectBox from "@/components/general/SelectBox";
 import TextArea from "@/components/general/TextArea";
 import AccountContentLayout from "@/components/layouts/AccountContentLayout";
 import useProduct from "@/hooks/useProduct";
+import useUser from "@/hooks/useUser";
 import { ProductDetailsType, ProductType } from "@/store/useProductStore";
 import { constructErrorMessage } from "@/utils/functions";
 import { Trash } from "iconsax-react";
@@ -55,6 +56,7 @@ const isImageFile = (file: File) => {
 };
 
 const Add = () => {
+  const { userToken } = useUser();
   const { query, push, pathname } = useRouter();
   const [uploadingFileContent, setUploadingFileContent] = useState<
     string | null
@@ -90,6 +92,7 @@ const Add = () => {
     setValue,
     watch,
     reset,
+    trigger,
     control
   } = useForm({
     defaultValues,
@@ -97,11 +100,12 @@ const Add = () => {
   });
 
   const clearAllCachedImages = useCallback(() => {
+    trigger();
     setValue("image", "");
     setFailedFileUpload(null);
     setUploadingFileContent(null);
     setUploadingPercentage(0);
-  }, [setValue]);
+  }, [setValue, trigger]);
 
   const selectedType = watch("type");
   const handlePush = useCallback(() => {
@@ -175,6 +179,7 @@ const Add = () => {
           },
           headers: { "Content-Type": "multipart/form-data" }
         });
+        trigger();
         setValue("image", data?.data?.link);
         setUploadingFileContent(null);
         setUploadingPercentage(0);
@@ -189,7 +194,7 @@ const Add = () => {
         setFailedFileUpload(files);
       }
     },
-    [setError, setValue, clearAllCachedImages]
+    [setError, setValue, clearAllCachedImages, trigger]
   );
 
   const onUpload = useCallback(
@@ -268,8 +273,20 @@ const Add = () => {
 
   useEffect(() => {
     setValue("type", type);
-    getProducts(type);
   }, [type, setValue]);
+
+  useEffect(() => {
+    if (userToken) {
+      if (type) {
+        if (type === "gift" && !giftProducts) {
+          getProducts("gift");
+        }
+        if (type === "log" && !logProducts) {
+          getProducts("log");
+        }
+      }
+    }
+  }, [type, giftProducts, logProducts, getProducts, userToken]);
 
   return (
     <AccountContentLayout>
