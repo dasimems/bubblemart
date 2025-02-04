@@ -2,7 +2,10 @@ import { postData, putData } from "@/api";
 import { ProductImage } from "@/assets/images";
 import Button from "@/components/Button";
 import InputField from "@/components/general/InputField";
+import Spinner from "@/components/general/Spinner";
+import useCart from "@/hooks/useCart";
 import useUser from "@/hooks/useUser";
+import { CartDetailsType } from "@/store/useCartStore";
 import { ProductDetailsType } from "@/store/useProductStore";
 import { constructErrorMessage } from "@/utils/functions";
 import { siteName, toastIds } from "@/utils/variables";
@@ -12,6 +15,11 @@ import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useDebouncedCallback } from "use-debounce";
+
+type UpdateCartBodyType = {
+  productId: string;
+  quantity: number;
+};
 
 const ProductCard: React.FC<
   ProductDetailsType & {
@@ -32,6 +40,7 @@ const ProductCard: React.FC<
   totalPrice
 }) => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const { updateCart } = useCart();
   const { push, asPath } = useRouter();
   const { userToken, userDetails } = useUser();
   const [hasUpdatedPerfumeCount, setHasUpdatedPerfumeCount] = useState(false);
@@ -48,11 +57,15 @@ const ProductCard: React.FC<
     }
     setIsAddingToCart(true);
     try {
-      await postData("/cart", {
+      const { data } = await postData<
+        UpdateCartBodyType,
+        ApiCallResponseType<CartDetailsType>
+      >("/cart", {
         productId: id,
         quantity: productCount
       });
       toast.success(`${name} added to cart!`);
+      updateCart(data?.data);
     } catch (error) {
       toast.error(
         constructErrorMessage(
@@ -63,7 +76,7 @@ const ProductCard: React.FC<
     } finally {
       setIsAddingToCart(false);
     }
-  }, [id, productCount, userToken, push, name]);
+  }, [id, productCount, userToken, push, name, updateCart]);
 
   const updateProduct = useCallback(
     async (quantity: number) => {
@@ -78,10 +91,15 @@ const ProductCard: React.FC<
       }
       setIsAddingToCart(true);
       try {
-        await putData("/cart", {
+        const { data } = await putData<
+          UpdateCartBodyType,
+          ApiCallResponseType<CartDetailsType>
+        >("/cart", {
           productId: id,
           quantity
         });
+
+        updateCart(data?.data);
         toast.success(`${name} updated!`);
       } catch (error) {
         setProductCount(cartQuantity || 1);
@@ -96,7 +114,7 @@ const ProductCard: React.FC<
         setHasUpdatedPerfumeCount(false);
       }
     },
-    [id, userToken, push, name, asPath, cartQuantity]
+    [id, userToken, push, name, asPath, cartQuantity, updateCart]
   );
 
   const debouncedUpdateCart = useDebouncedCallback(
@@ -207,53 +225,60 @@ const ProductCard: React.FC<
         {isCart && (
           <div className="flex flex-col gap-2">
             <p className="text-primary-800">Quantity</p>
-            <InputField
-              className="self-start"
-              disabled={isAddingToCart}
-              value={productCount?.toString()}
-              inputClassName="bg-primary-950 border-none text-center w-36"
-              placeholder=" "
-              rightButtonClassName="right-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
-              leftButtonClassName="left-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
-              rightIcon={
-                <span className=" inline-flex">
-                  <PlusIcon />
-                </span>
-              }
-              leftIcon={
-                <span className=" inline-flex">
-                  <MinusIcon />
-                </span>
-              }
-              rightIconAction={() => {
-                if (isAddingToCart) {
-                  return;
+            <div className="relative w-auto w-full">
+              <InputField
+                className="self-start"
+                disabled={isAddingToCart}
+                value={productCount?.toString()}
+                inputClassName="bg-primary-950 border-none text-center w-36"
+                placeholder=" "
+                rightButtonClassName="right-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
+                leftButtonClassName="left-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
+                rightIcon={
+                  <span className=" inline-flex">
+                    <PlusIcon />
+                  </span>
                 }
-                if (productCount === quantity) {
-                  return toast(
-                    "You can't add more than the available quantity"
+                leftIcon={
+                  <span className=" inline-flex">
+                    <MinusIcon />
+                  </span>
+                }
+                rightIconAction={() => {
+                  if (isAddingToCart) {
+                    return;
+                  }
+                  if (productCount === quantity) {
+                    return toast(
+                      "You can't add more than the available quantity"
+                    );
+                  }
+                  setProductCount((prevState) =>
+                    prevState >= quantity ? quantity : prevState + 1
                   );
-                }
-                setProductCount((prevState) =>
-                  prevState >= quantity ? quantity : prevState + 1
-                );
 
-                if (isCart && productCount !== quantity) {
-                  setHasUpdatedPerfumeCount(true);
-                }
-              }}
-              leftIconAction={() => {
-                if (isAddingToCart) {
-                  return;
-                }
-                setProductCount((prevState) =>
-                  prevState > 1 ? prevState - 1 : 1
-                );
-                if (isCart && productCount !== quantity) {
-                  setHasUpdatedPerfumeCount(true);
-                }
-              }}
-            />
+                  if (isCart && productCount !== quantity) {
+                    setHasUpdatedPerfumeCount(true);
+                  }
+                }}
+                leftIconAction={() => {
+                  if (isAddingToCart) {
+                    return;
+                  }
+                  setProductCount((prevState) =>
+                    prevState > 1 ? prevState - 1 : 1
+                  );
+                  if (isCart && productCount !== quantity) {
+                    setHasUpdatedPerfumeCount(true);
+                  }
+                }}
+              />
+              {isAddingToCart && (
+                <div className="absolute flex top-0 left-0 h-full w-full items-center justify-center">
+                  <Spinner className="!size-4 !border-2" />
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
