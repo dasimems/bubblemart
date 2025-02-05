@@ -47,6 +47,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           >
             {leftIcon && (
               <button
+                type="button"
                 onClick={() => {
                   if (leftIconAction && typeof leftIconAction === "function") {
                     leftIconAction();
@@ -72,6 +73,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 
             {rightIcon && (
               <button
+                type="button"
                 onClick={() => {
                   if (
                     rightIconAction &&

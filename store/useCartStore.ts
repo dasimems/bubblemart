@@ -1,6 +1,16 @@
 import { create } from "zustand";
 import { ProductDetailsType, ProductType } from "./useProductStore";
 
+export type CartBodyType = {
+  senderName: string;
+  receiverName: string;
+  receiverAddress: string;
+  receiverPhoneNumber: string;
+  shortNote: string;
+  longitude: number;
+  latitude: number;
+};
+
 export type CartProductDetails = {
   id: string;
   image: string;
@@ -54,6 +64,7 @@ export type CartStoreType = {
   setCartNeedAddress: (needed: boolean) => void;
 
   updateCart: (cart: CartDetailsType) => void;
+  clearCart: () => void;
 };
 
 const initialValue = {
@@ -109,6 +120,13 @@ const useCartStore = create<CartStoreType>((set) => ({
         ...prevState,
         carts: removeDuplicateCarts(carts)
       };
+    });
+  },
+  clearCart: () => {
+    set({
+      carts: null,
+      cartFetchingError: null,
+      isNextCartLoading: false
     });
   }
 }));

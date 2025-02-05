@@ -3,10 +3,12 @@ import { deleteSavedToken, getSavedToken, saveToken } from "@/localservices";
 import useUserStore from "@/store/useUserStore";
 import { useCallback } from "react";
 import useUser from "./useUser";
+import useCart from "./useCart";
 
 const useAuth = () => {
   const { setUserToken } = useUserStore();
   const { getUserDetails } = useUser();
+  const { getCart } = useCart();
 
   const performAuthOperations = useCallback(
     (token: string, shouldNotSaveToken?: boolean) => {
@@ -21,11 +23,12 @@ const useAuth = () => {
           saveToken(token);
         }
         getUserDetails();
+        getCart();
       } catch (error) {
         // perform any preaction operations
       }
     },
-    [setUserToken, getUserDetails]
+    [setUserToken, getUserDetails, getCart]
   );
 
   const loadApp = useCallback(async () => {

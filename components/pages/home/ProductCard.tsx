@@ -8,7 +8,7 @@ import useUser from "@/hooks/useUser";
 import { CartDetailsType } from "@/store/useCartStore";
 import { ProductDetailsType } from "@/store/useProductStore";
 import { constructErrorMessage } from "@/utils/functions";
-import { siteName, toastIds } from "@/utils/variables";
+import { toastIds } from "@/utils/variables";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
