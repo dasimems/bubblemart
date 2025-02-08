@@ -120,7 +120,7 @@ const OrderSuccessful = () => {
   return (
     <>
       <PageLayout>
-        <div className="w-full h-full fixed items-center justify-center flex flex-col">
+        <div className="w-full h-full fixed items-center justify-center flex flex-col left-0 top-0">
           <Image
             alt="logo"
             className="w-[100vh] md:w-full object-contain opacity-10 -rotate-45 "
