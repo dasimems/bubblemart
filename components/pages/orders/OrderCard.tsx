@@ -68,25 +68,26 @@ const OrderCard: React.FC<OrderDetailsType> = ({
     handleRedirectToCheckout
   ]);
   return (
-    <div className="shadow-sm bg-white py-3 px-5 rounded-md flex items-center gap-20">
-      <div className="flex flex-1 items-center gap-4">
-        {cartItems?.slice(0, 3).map((cart, index) => (
-          <div
-            key={cart?.id}
-            className="size-10 rounded-full bg-slate-200 relative overflow-hidden shadow-sm"
-            style={{
-              marginLeft: index === 0 ? 0 : -10
-            }}
-          >
-            <Image
-              src={cart?.productDetails?.image}
-              alt={cart?.productDetails?.name}
-              fill
-              className="object-cover object-center"
-            />
-          </div>
-        ))}
-        <div className="flex flex-col gap-2">
+    <div className="shadow-sm bg-white py-3 px-5 rounded-md flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-10">
+      <div className="flex flex-1 sm:items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center">
+          {cartItems?.slice(0, 3).map((cart, index) => (
+            <div
+              key={cart?.id}
+              className={`size-10 shrink-0 rounded-full bg-slate-200 relative overflow-hidden shadow-sm ${
+                index === 0 ? "" : "sm:-ml-5 -mt-5 sm:mt-0"
+              }`}
+            >
+              <Image
+                src={cart?.productDetails?.image}
+                alt={cart?.productDetails?.name}
+                fill
+                className="object-cover object-center"
+              />
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-2 flex-1">
           <p className="font-medium opacity-50">
             {orderTitle}
             {cartItems?.length > 3 && `& ${cartItems?.length - 3} more...`}
@@ -94,9 +95,48 @@ const OrderCard: React.FC<OrderDetailsType> = ({
           <p className="opacity-50 text-sm">
             {moment(createdAt).format("DD, MMMM YYYY hh:mm A")}
           </p>
+          <div className="gap-3 flex items-center sm:hidden">
+            <Link href={`/orders/${id}`} className="underline text-primary-100">
+              View details
+            </Link>
+            {paidAt && (
+              <Link title="view receipt" href={`/orders/${id}/success`}>
+                <FileCheck className="text-secondary" size={20} />
+              </Link>
+            )}
+
+            {!paidAt && (
+              <>
+                {checkoutDetails && (
+                  <Button
+                    disabled={initiatingPayment}
+                    onClick={() => {
+                      handleRedirectToCheckout(
+                        checkoutDetails?.authorization_url
+                      );
+                    }}
+                    buttonType="primary"
+                    size={"small"}
+                  >
+                    Complete payment
+                  </Button>
+                )}
+                {!checkoutDetails && (
+                  <Button
+                    loading={initiatingPayment}
+                    onClick={handlePayment}
+                    buttonType="primary"
+                    size={"small"}
+                  >
+                    Pay now
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
-      <div className="gap-4 flex items-center justify-end">
+      <div className="gap-4 sm:flex items-center hidden sm:justify-end">
         <Link href={`/orders/${id}`} className="underline text-primary-100">
           View details
         </Link>
