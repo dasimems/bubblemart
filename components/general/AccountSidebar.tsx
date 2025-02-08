@@ -165,7 +165,9 @@ const AccountSidebar = () => {
       </div>
       <div className="pt-20 pb-6 border-t px-6">
         <button
-          onClick={logoutUser}
+          onClick={() => {
+            logoutUser();
+          }}
           className="inline-flex items-center gap-2 hover:text-red-500"
         >
           <span>

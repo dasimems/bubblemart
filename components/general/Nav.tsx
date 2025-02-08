@@ -189,7 +189,9 @@ const Nav = () => {
                     </li>
                     <li className="w-full">
                       <button
-                        onClick={logoutUser}
+                        onClick={() => {
+                          logoutUser();
+                        }}
                         className="w-full flex items-center gap-1 text-red-400 hover:bg-primary-900 hover:pl-7 duration-300 py-3 px-5"
                       >
                         <span className="opacity-70">
@@ -281,7 +283,9 @@ const Nav = () => {
             {userToken && (
               <li>
                 <button
-                  onClick={logoutUser}
+                  onClick={() => {
+                    logoutUser();
+                  }}
                   className="w-full flex items-center gap-1 text-red-400 hover:bg-primary-900"
                 >
                   <span>Logout</span>
