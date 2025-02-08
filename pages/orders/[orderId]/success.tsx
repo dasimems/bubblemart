@@ -59,6 +59,10 @@ const OrderSuccessful = () => {
     (acc, { totalPrice }) => acc + (totalPrice?.whole || 0),
     0
   );
+  const formatedTotalPrice = new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN"
+  }).format(totalPrice);
 
   const verifyOrder = useCallback(async () => {
     if (orderDetails) {
@@ -183,7 +187,7 @@ const OrderSuccessful = () => {
                   className={`${tdClassName} font-medium text-xs`}
                   colSpan={2}
                 >
-                  {totalPrice}
+                  {formatedTotalPrice}
                 </td>
               </tr>
             </tfoot>
