@@ -137,7 +137,7 @@ const Cart = () => {
 
   if (isCheckingOut) {
     return (
-      <div className="w-screen h-screen items-center justify-center flex flex-col gap-3">
+      <div className="w-screen h-[calc(100vh-25rem)] items-center justify-center flex flex-col gap-3">
         <Spinner />
         {orderStatus && <p className="text-center opacity-40">{orderStatus}</p>}
       </div>
