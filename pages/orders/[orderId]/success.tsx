@@ -153,7 +153,7 @@ const OrderSuccessful = () => {
             </thead>
             <tbody>
               {orderDetails?.cartItems?.map((cartItem, index) => (
-                <tr>
+                <tr key={cartItem?.id}>
                   <td className={tdClassName}>{index + 1}</td>
                   <td className={tdClassName}>
                     {cartItem?.productDetails?.name}
