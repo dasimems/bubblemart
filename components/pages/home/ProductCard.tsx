@@ -149,7 +149,7 @@ const ProductCard: React.FC<
 
   return (
     <div className="flex flex-col sm:flex-row items-stretch rounded-3xl border shadow-md p-10 gap-10 bg-white border-slate-300">
-      <div className=" w-full sm:w-1/3 md:w-3/6 h-[clamp(10rem,20vw,20rem)] shrink-0 bg-slate-200 rounded-2xl overflow-hidden relative">
+      <div className=" w-full sm:w-1/3 md:w-3/6 h-[clamp(15rem,30vw,30rem)] shrink-0 bg-slate-200 rounded-2xl overflow-hidden relative">
         <Image
           alt={`${name}-${description}`}
           src={image}
@@ -158,7 +158,7 @@ const ProductCard: React.FC<
         />
       </div>
 
-      <div className="flex flex-col justify-between flex-1 gap-4">
+      <div className="flex flex-col md:justify-between flex-1 gap-6">
         <div className="flex flex-col gap-1">
           <p className="text-primary-800">
             {type === "gift" ? "Edible gifts" : ""}

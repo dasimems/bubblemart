@@ -160,7 +160,7 @@ const Cart = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-start">
+            <div className="grid grid-cols-1 min-[1225px]:grid-cols-2 gap-10 md:gap-20 items-start">
               <div className="flex flex-col gap-10">
                 {carts &&
                   carts.map(({ productDetails, id, quantity, totalPrice }) => (
@@ -180,7 +180,7 @@ const Cart = () => {
               </div>
 
               {carts && doCartNeedAddress && (
-                <form className="flex flex-col gap-5 sticky bottom-0 top-auto p-10 rounded-2xl bg-white shadow-xl border">
+                <div className="flex flex-col gap-5 min-[1225px]:sticky min-[1225px]:bottom-0 min-[1225px]:top-auto p-10 rounded-2xl bg-white shadow-xl border">
                   <InputField
                     inputClassName="rounded-xl"
                     label="Sender's Name"
@@ -278,7 +278,7 @@ const Cart = () => {
                       incomplete address, we won&apos;t be held liable
                     </p>
                   </div>
-                </form>
+                </div>
               )}
             </div>
 
