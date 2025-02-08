@@ -29,7 +29,7 @@ const useCart = () => {
     }
   }, [setCarts, setCartFetchingError, setCartNeedAddress]);
 
-  return { getCart, ...details };
+  return { getCart, setCartNeedAddress, ...details };
 };
 
 export default useCart;

@@ -19,6 +19,7 @@ export type OrderDetailsType = {
   refundedAt: Date | null;
   contactInformation: CartBodyType;
   status: OrderStatusType;
+  paymentMethod?: string;
 };
 
 const removeDuplicateOrders = (

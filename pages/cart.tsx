@@ -42,6 +42,7 @@ const Cart = () => {
   const { userToken } = useUser();
   const { updateOrder } = useOrder();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [orderStatus, setOrderStatus] = useState<string | null>(null);
 
   const {
     register,
@@ -71,6 +72,7 @@ const Cart = () => {
     async (body: CartBodyType) => {
       setIsCheckingOut(true);
       try {
+        setOrderStatus("Creating order...");
         const { data } = await postData<
           CartBodyType,
           ApiCallResponseType<OrderDetailsType>
@@ -79,15 +81,19 @@ const Cart = () => {
         if (!orderDetails) {
           toast.error("Unable to create order! Please try again");
         }
+        clearCart();
         const { id } = orderDetails;
+        setOrderStatus("Initializing payment...");
         updateOrder(orderDetails);
         const { data: paymentData } = await postData<
-          undefined,
+          { callbackUrl: string },
           ApiCallResponseType<PaymentDetailsType>
-        >(`/payment/${id}`);
+        >(`/payment/${id}`, {
+          callbackUrl: `${window.location.origin}/orders/${id}/success`
+        });
+
         updateOrder({ ...orderDetails, checkoutDetails: paymentData?.data });
-        window.open(paymentData?.data?.authorization_url, "_blank");
-        clearCart();
+        window.location.href = paymentData?.data?.authorization_url;
       } catch (error) {
         const errorsFromServer = (error as ApiErrorResponseType)?.response?.data
           ?.error;
@@ -109,6 +115,7 @@ const Cart = () => {
         );
       } finally {
         setIsCheckingOut(false);
+        setOrderStatus(null);
       }
     },
     [setError, updateOrder, clearCart]
@@ -131,8 +138,9 @@ const Cart = () => {
 
   if (isCheckingOut) {
     return (
-      <div className="w-screen h-screen items-center justify-center flex">
+      <div className="w-screen h-screen items-center justify-center flex flex-col gap-3">
         <Spinner />
+        {orderStatus && <p className="text-center opacity-40">{orderStatus}</p>}
       </div>
     );
   }

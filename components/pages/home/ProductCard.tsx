@@ -40,7 +40,7 @@ const ProductCard: React.FC<
   totalPrice
 }) => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const { updateCart } = useCart();
+  const { updateCart, setCartNeedAddress } = useCart();
   const { push, asPath } = useRouter();
   const { userToken, userDetails } = useUser();
   const [hasUpdatedPerfumeCount, setHasUpdatedPerfumeCount] = useState(false);
@@ -66,6 +66,7 @@ const ProductCard: React.FC<
       });
       toast.success(`${name} added to cart!`);
       updateCart(data?.data);
+      setCartNeedAddress(type === "gift");
     } catch (error) {
       toast.error(
         constructErrorMessage(
@@ -76,7 +77,16 @@ const ProductCard: React.FC<
     } finally {
       setIsAddingToCart(false);
     }
-  }, [id, productCount, userToken, push, name, updateCart]);
+  }, [
+    id,
+    productCount,
+    userToken,
+    push,
+    name,
+    updateCart,
+    type,
+    setCartNeedAddress
+  ]);
 
   const updateProduct = useCallback(
     async (quantity: number) => {
