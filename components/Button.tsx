@@ -31,7 +31,7 @@ const Button: React.FC<
   ...props
 }) => {
   let buttonStyleClassName = "bg-slate-200";
-  const buttonSizeClassName = "text-base";
+  let buttonSizeClassName = "text-base";
 
   switch (buttonType) {
     case "black":
@@ -53,10 +53,10 @@ const Button: React.FC<
   }
   switch (size) {
     case "large":
-      buttonStyleClassName = "text-lg";
+      buttonSizeClassName = "text-lg";
       break;
     case "small":
-      buttonStyleClassName = "text-sm";
+      buttonSizeClassName = "text-sm";
       break;
     default:
       break;

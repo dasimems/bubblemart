@@ -1,6 +1,8 @@
 import ProductCardLoader from "@/components/general/ProductCardLoader";
 import PageLayout from "@/components/layouts/PageLayout";
 import SectionContainer from "@/components/layouts/SectionContainer";
+import OrderCard from "@/components/pages/orders/OrderCard";
+import OrderCardLoader from "@/components/pages/orders/OrderCardLoader";
 // import ProductCard from "@/components/pages/home/ProductCard";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
@@ -34,15 +36,14 @@ const Orders = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-start">
-            {/* {orders &&
-                orders.map(({ cartItems: {}, id }) => (
-                  <ProductCard {...productDetails} key={id} />
-                ))} */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {!orders &&
-              new Array(4)
+              new Array(8)
                 .fill(0)
-                .map((_, index) => <ProductCardLoader key={index} />)}
+                .map((_, index) => <OrderCardLoader key={index} />)}
+            {orders &&
+              orders.length > 1 &&
+              orders.map((order) => <OrderCard {...order} key={order.id} />)}
           </div>
         </SectionContainer>
       )}

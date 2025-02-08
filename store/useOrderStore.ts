@@ -20,6 +20,7 @@ export type OrderDetailsType = {
   contactInformation: CartBodyType;
   status: OrderStatusType;
   paymentMethod?: string;
+  createdAt: Date;
 };
 
 const removeDuplicateOrders = (
