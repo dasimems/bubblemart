@@ -55,6 +55,11 @@ const OrderSuccessful = () => {
     null
   );
 
+  const totalPrice = (orderDetails?.cartItems || [])?.reduce(
+    (acc, { totalPrice }) => acc + (totalPrice?.whole || 0),
+    0
+  );
+
   const verifyOrder = useCallback(async () => {
     if (orderDetails) {
       return;
@@ -178,7 +183,7 @@ const OrderSuccessful = () => {
                   className={`${tdClassName} font-medium text-xs`}
                   colSpan={2}
                 >
-                  300
+                  {totalPrice}
                 </td>
               </tr>
             </tfoot>

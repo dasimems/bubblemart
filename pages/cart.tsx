@@ -113,7 +113,6 @@ const Cart = () => {
             "Unable to checkout! Please try again"
           )
         );
-      } finally {
         setIsCheckingOut(false);
         setOrderStatus(null);
       }
