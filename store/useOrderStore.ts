@@ -14,6 +14,7 @@ export type OrderDetailsType = {
   id: string;
   checkoutDetails: PaymentDetailsType | null;
   paidAt: Date | null;
+  deliveredAt: Date | null;
   paymentInitiatedAt: Date | null;
   paymentReference: string | null;
   refundedAt: Date | null;

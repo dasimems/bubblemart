@@ -17,6 +17,7 @@ const OrderCard: React.FC<OrderDetailsType> = ({
   createdAt,
   paidAt,
   checkoutDetails,
+  paymentReference,
   ...orderContent
 }) => {
   const [initiatingPayment, setInitiatingPayment] = useState(false);
@@ -30,6 +31,7 @@ const OrderCard: React.FC<OrderDetailsType> = ({
     }
     window.location.href = url;
   }, []);
+  const verifyPaymentURL = `/orders/${id}/success?pid=${paymentReference}`;
   const handlePayment = useCallback(async () => {
     setInitiatingPayment(true);
     try {
@@ -45,6 +47,7 @@ const OrderCard: React.FC<OrderDetailsType> = ({
         id,
         createdAt,
         paidAt,
+        paymentReference,
         ...orderContent,
         checkoutDetails: paymentData?.data
       });
@@ -65,7 +68,8 @@ const OrderCard: React.FC<OrderDetailsType> = ({
     createdAt,
     paidAt,
     updateOrder,
-    handleRedirectToCheckout
+    handleRedirectToCheckout,
+    paymentReference
   ]);
   return (
     <div className="shadow-sm bg-white py-3 px-5 rounded-md flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-10">
@@ -95,12 +99,12 @@ const OrderCard: React.FC<OrderDetailsType> = ({
           <p className="opacity-50 text-sm">
             {moment(createdAt).format("DD, MMMM YYYY hh:mm A")}
           </p>
-          <div className="gap-3 flex items-center sm:hidden">
+          <div className="gap-2 flex items-center sm:hidden text-xs">
             <Link href={`/orders/${id}`} className="underline text-primary-100">
               View details
             </Link>
             {paidAt && (
-              <Link title="view receipt" href={`/orders/${id}/success`}>
+              <Link title="view receipt" href={verifyPaymentURL}>
                 <FileCheck className="text-secondary" size={20} />
               </Link>
             )}
@@ -141,7 +145,7 @@ const OrderCard: React.FC<OrderDetailsType> = ({
           View details
         </Link>
         {paidAt && (
-          <Link title="view receipt" href={`/orders/${id}/success`}>
+          <Link title="view receipt" href={verifyPaymentURL}>
             <FileCheck className="text-secondary" />
           </Link>
         )}

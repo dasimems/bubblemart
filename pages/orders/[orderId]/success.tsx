@@ -13,6 +13,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -46,6 +47,7 @@ const formatPaymentMethod = (paymentMethod?: string) => {
 };
 
 const OrderSuccessful = () => {
+  const { query } = useRouter();
   const param = useParams();
   const { orderId } = param || {};
   const [verifyingOrderError, setVerifyingOrderError] = useState<string | null>(
@@ -110,7 +112,7 @@ const OrderSuccessful = () => {
         <SectionContainer contentContainerClassName="flex items-center flex-col gap-6 h-[calc(100vh-25rem)] w-screen justify-center">
           <Spinner />
           <p className="text-center text-lg font-semibold">
-            Verifying order...
+            {query?.pid ? "Fetching details..." : "Verifying order..."}
           </p>
         </SectionContainer>
       </PageLayout>
