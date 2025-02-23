@@ -3,12 +3,15 @@ import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import useCustomerOrder from "@/hooks/useCustomerOrder";
 import useUser from "@/hooks/useUser";
+import moment from "moment";
+import { useRouter } from "next/router";
 import React, { use, useEffect } from "react";
 
 const Payments = () => {
-  const tableContentClassname = "text-sm py-4";
+  const { push } = useRouter();
+  const tableContentClassname = "text-sm py-4 px-3 text-center";
   const loadingClassName = "animate-pulse h-3 bg-slate-300 rounded-md";
-  const tableHeadTextStyle = `${tableContentClassname} font-medium text-center`;
+  const tableHeadTextStyle = `${tableContentClassname} font-medium`;
   const tableLoadingContentStyle = `${tableContentClassname} px-2`;
   const { userToken } = useUser();
   const { orders, fetchingOrderError, getOrders } = useCustomerOrder();
@@ -67,9 +70,33 @@ const Payments = () => {
                 {orders &&
                   !fetchingOrderError &&
                   orders.length > 0 &&
-                  orders
-                    .slice(0, 5)
-                    .map((orders) => <tr key={orders?.id}></tr>)}
+                  orders.slice(0, 5).map((order, index) => (
+                    <tr
+                      onClick={() => {
+                        push(`/account/order/${order?.id}`);
+                      }}
+                      key={order?.id}
+                      className={`${
+                        (index + 1) % 2 === 0 ? "bg-white/50" : ""
+                      } hover:shadow-md duration-300 transition-all hover:bg-primary-900 cursor-pointer`}
+                    >
+                      <td className={tableContentClassname}>{index + 1}</td>
+                      <td className={tableContentClassname}>
+                        {order?.user?.email}
+                      </td>
+                      <td className={tableContentClassname}>
+                        {moment(order?.createdAt).format(
+                          "DD, MMMM YYYY hh:mm A"
+                        )}
+                      </td>
+                      <td className={tableContentClassname}>
+                        {moment(order?.paidAt).format("DD, MMMM YYYY hh:mm A")}
+                      </td>
+                      <td className={tableContentClassname}>
+                        {order?.cartItems?.length || 0}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>

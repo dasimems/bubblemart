@@ -16,6 +16,11 @@ import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+export const productTypeClassName: { [name: string]: string } = {
+  gift: "bg-secondary/20 text-primary",
+  log: "bg-primary/50"
+};
+
 const Products = () => {
   const { query } = useRouter();
   let { type } = query;
@@ -27,10 +32,7 @@ const Products = () => {
   const tableHeadTextStyle = `${tableContentClassname} font-medium text-center`;
   const actionContentClassName =
     "hover:bg-primary/10 p-2 px-3 w-full text-left cursor-pointer";
-  const productTypeClassName: { [name: string]: string } = {
-    gift: "bg-secondary/20 text-primary",
-    log: "bg-primary/50"
-  };
+
   const actionButtonClassName = "w-full inline-flex gap-2 items-center";
   const tableLoadingContentStyle = `${tableContentClassname} px-2`;
   const [clickedProductId, setClickedProductId] = useState<string | null>(null);

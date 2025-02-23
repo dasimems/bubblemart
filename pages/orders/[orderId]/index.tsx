@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 
-const OrderDetailsCard: React.FC<{ title: string; value: string }> = ({
+export const OrderDetailsCard: React.FC<{ title: string; value: string }> = ({
   title,
   value
 }) => {
@@ -34,7 +34,7 @@ const OrderDetails = () => {
   const params = useParams();
   const { orderId } = params || {};
   const goToSuccessPage = useCallback(
-    (isAlreadyVerified: boolean) => {
+    (isAlreadyVerified?: boolean) => {
       push(
         `/orders/${orderId}/success${
           isAlreadyVerified ? `?pid=${orderDetails?.paymentReference}` : ""
@@ -77,7 +77,7 @@ const OrderDetails = () => {
 
           {!orderDetailsError && orderDetails && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-6 rounded-xl bg-white shadow-md p-8 py-10">
+              <div className="flex flex-col gap-6 rounded-xl bg-white shadow-md p-8 py-10 ">
                 <OrderDetailsCard
                   title="Order ID"
                   value={orderDetails?.id || ""}
@@ -105,7 +105,9 @@ const OrderDetails = () => {
                 <div className="flex items-center gap-4">
                   {!orderDetails?.paidAt && (
                     <Button
-                      onClick={goToSuccessPage}
+                      onClick={() => {
+                        goToSuccessPage();
+                      }}
                       buttonType="secondary"
                       className="text-white"
                     >
@@ -114,7 +116,9 @@ const OrderDetails = () => {
                   )}
                   {orderDetails?.paidAt && (
                     <Button
-                      onClick={goToSuccessPage}
+                      onClick={() => {
+                        goToSuccessPage(true);
+                      }}
                       buttonType="primary"
                       className="text-white"
                     >

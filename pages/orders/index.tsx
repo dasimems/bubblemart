@@ -42,7 +42,7 @@ const Orders = () => {
                 .fill(0)
                 .map((_, index) => <OrderCardLoader key={index} />)}
             {orders &&
-              orders.length > 1 &&
+              orders.length > 0 &&
               orders.map((order) => <OrderCard {...order} key={order.id} />)}
           </div>
         </SectionContainer>

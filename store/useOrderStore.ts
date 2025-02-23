@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { CartBodyType, CartDetailsType } from "./useCartStore";
+import { UserDetailsType } from "./useUserStore";
 
 export type OrderStatusType = "PAID" | "PENDING" | "DELIVERED";
 
@@ -22,6 +23,7 @@ export type OrderDetailsType = {
   status: OrderStatusType;
   paymentMethod?: string;
   createdAt: Date;
+  user?: UserDetailsType;
 };
 
 const removeDuplicateOrders = (
