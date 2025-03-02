@@ -3,13 +3,16 @@ import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import useCustomers from "@/hooks/useCustomers";
 import useUser from "@/hooks/useUser";
+import moment from "moment";
+import { useRouter } from "next/router";
 import React, { use, useEffect } from "react";
 
 const Users = () => {
-  const tableContentClassname = "text-sm py-4";
+  const tableContentClassname = "text-sm py-4 text-center px-3";
   const loadingClassName = "animate-pulse h-3 bg-slate-300 rounded-md";
-  const tableHeadTextStyle = `${tableContentClassname} font-medium text-center`;
+  const tableHeadTextStyle = `${tableContentClassname} font-medium`;
   const tableLoadingContentStyle = `${tableContentClassname} px-2`;
+  const { push } = useRouter();
 
   const { userToken } = useUser();
   const { customers, fetchingCustomersError, getCustomers } = useCustomers();
@@ -71,9 +74,33 @@ const Users = () => {
                   {customers &&
                     !fetchingCustomersError &&
                     customers.length > 0 &&
-                    customers
-                      .slice(0, 5)
-                      .map((customers) => <tr key={customers?.id}></tr>)}
+                    customers.slice(0, 5).map((customer, index) => (
+                      <tr
+                        key={customer?.id}
+                        onClick={() => {
+                          push(`/account/users/${customer?.id}`);
+                        }}
+                        className={`${
+                          (index + 1) % 2 === 0 ? "bg-white/50" : ""
+                        } hover:shadow-md duration-300 transition-all hover:bg-primary-900 cursor-pointer`}
+                      >
+                        <td className={tableContentClassname}>{index + 1}</td>
+                        <td className={tableContentClassname}>
+                          {customer?.name}
+                        </td>
+                        <td className={tableContentClassname}>
+                          {moment(customer?.createdAt).format(
+                            "DD, MMMM YYYY hh:mm A"
+                          )}
+                        </td>
+                        <td className={tableContentClassname}>
+                          {customer?.email}
+                        </td>
+                        <td className={tableContentClassname}>
+                          <span className="uppercase">{customer?.role}</span>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>

@@ -219,7 +219,9 @@ const Cart = () => {
                               className={`w-full peer/radio-btn border ${
                                 error?.message && "!border-red-400"
                               } py-3 px-5 outline-none rounded-md w-full h-full`}
-                              apiKey={"AIzaSyDk6tM6q5dXWQ5i7HtQ5k5OXT6CMMfq3nQ"}
+                              apiKey={
+                                process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
+                              }
                               onPlaceSelected={(place) => {
                                 if (!place) {
                                   return;

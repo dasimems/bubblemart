@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { OrderDetailsType } from "./useOrderStore";
 
 export type Roles = "USER" | "ADMIN";
 
@@ -10,6 +11,10 @@ export type UserDetailsType = {
   updatedAt?: Date;
   avatar?: string;
   id: string;
+  totalCarts?: number;
+  totalOrders?: number;
+  totalCompletedOrders?: number;
+  lastMadeOrder?: OrderDetailsType;
 };
 
 type UserStoreType = {
@@ -25,7 +30,7 @@ type UserStoreType = {
 const initialValue = {
   userDetails: null,
   userToken: null,
-  fetchingUserDetailsError: null,
+  fetchingUserDetailsError: null
 };
 
 const useUserStore = create<UserStoreType>((set) => ({
@@ -41,7 +46,7 @@ const useUserStore = create<UserStoreType>((set) => ({
   },
   clearStore: () => {
     set(initialValue);
-  },
+  }
 }));
 
 export default useUserStore;

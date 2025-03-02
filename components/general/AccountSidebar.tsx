@@ -112,7 +112,7 @@ const LinkDropDownContainer: React.FC<{
 const AccountSidebar = () => {
   const { logoutUser } = useUser();
   return (
-    <div className="w-72 hidden md:flex flex-col h-screen overflow-auto gap-10">
+    <div className="w-72 hidden md:flex flex-col h-screen sticky top-0 overflow-auto gap-10">
       <div className="h-16 flex items-center justify-center  px-6">
         <Link href={"/"} className="flex items-center gap-2">
           <Image

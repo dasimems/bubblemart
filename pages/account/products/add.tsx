@@ -4,6 +4,10 @@ import InputField from "@/components/general/InputField";
 import SelectBox from "@/components/general/SelectBox";
 import TextArea from "@/components/general/TextArea";
 import AccountContentLayout from "@/components/layouts/AccountContentLayout";
+import LogForm, {
+  LogBodyType,
+  logInitialValue
+} from "@/components/pages/products/LogForm";
 import useProduct from "@/hooks/useProduct";
 import useUser from "@/hooks/useUser";
 import { ProductDetailsType, ProductType } from "@/store/useProductStore";
@@ -16,12 +20,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-type LogBodyType = {
-  email: string;
-  password: string;
-  error?: string;
-};
-
 export type AddProductBodyType = {
   name: string;
   type: ProductType;
@@ -29,7 +27,7 @@ export type AddProductBodyType = {
   amount: number;
   image: string;
   description: string;
-  log?: LogBodyType[];
+  logs?: LogBodyType[];
 };
 
 const defaultValues: AddProductBodyType = {
@@ -39,7 +37,7 @@ const defaultValues: AddProductBodyType = {
   amount: 0,
   image: "",
   description: "",
-  log: []
+  logs: []
 };
 
 const isImageFile = (file: File) => {
@@ -55,6 +53,20 @@ const isImageFile = (file: File) => {
   return !!file && validImageMimeTypes.includes(file.type);
 };
 
+const validateLogs = (value?: LogBodyType[]) => {
+  if (!value) {
+    return "Please add at least one log";
+  }
+  if (value && value?.length < 1) {
+    return "Please add at least one log";
+  }
+  const hasUnFilledValue = value.some((log) => !log.email || !log.password);
+
+  if (hasUnFilledValue) {
+    return "Please fill all logs fields";
+  }
+};
+
 const Add = () => {
   const { userToken } = useUser();
   const { query, push, pathname } = useRouter();
@@ -65,12 +77,6 @@ const Add = () => {
   const [failedFileUpload, setFailedFileUpload] = useState<FileList | null>(
     null
   );
-  const [logs, setLogs] = useState<LogBodyType[]>([
-    {
-      email: "",
-      password: ""
-    }
-  ]);
 
   const {
     setLogProducts,
@@ -93,6 +99,7 @@ const Add = () => {
     watch,
     reset,
     trigger,
+    getValues,
     control
   } = useForm({
     defaultValues,
@@ -113,17 +120,6 @@ const Add = () => {
       push(`${pathname}?type=${selectedType}`);
     }
   }, [push, selectedType, type, pathname]);
-
-  const changeValue = useCallback(
-    (sentIndex: number, sentValue: LogBodyType) => {
-      setLogs((prevState) =>
-        prevState.map((value, index) =>
-          index === sentIndex ? sentValue : value
-        )
-      );
-    },
-    []
-  );
 
   const toBase64 = (file: Blob) =>
     new Promise((resolve, reject) => {
@@ -228,12 +224,22 @@ const Add = () => {
 
   const addProduct = useCallback(
     async (productBody: AddProductBodyType) => {
-      const { type } = productBody;
+      const { type, logs, ...details } = productBody;
+      let bodyToSend: AddProductBodyType = { ...details, type };
+      if (logs) {
+        bodyToSend = {
+          ...bodyToSend,
+          logs: (logs || []).filter(
+            (logDetails) =>
+              logDetails && logDetails.email && logDetails.password
+          )
+        };
+      }
       try {
         const { data } = await postData<
           AddProductBodyType,
           ApiCallResponseType<ProductDetailsType>
-        >("/product", productBody);
+        >("/product", bodyToSend);
         const { data: content } = data;
         if (type === "gift") {
           setGiftProducts([content, ...(giftProducts || [])]);
@@ -466,50 +472,24 @@ const Add = () => {
           />
 
           {type === "log" && (
-            <div className="flex flex-col gap-6">
-              <h2 className="font-medium">Logs</h2>
-              {(logs || []).map(({ email, password, error }, index) => (
-                <div
-                  className="flex flex-col gap-2 p-6 border border-dotted rounded-md relative border-slate-400"
-                  key={index}
-                >
-                  {logs.length > 1 && (
-                    <button
-                      title="remove log"
-                      className="absolute top-2 right-2"
-                    >
-                      <Trash className="text-red-600" />
-                    </button>
+            <Controller
+              name="logs"
+              control={control}
+              rules={{
+                validate: validateLogs
+              }}
+              render={({
+                field: { value, onChange },
+                fieldState: { error }
+              }) => (
+                <div className="flex flex-col gap-2">
+                  <LogForm logs={value || []} onChange={onChange} />
+                  {error?.message && (
+                    <p className="text-red-600 text-sm">{error?.message}</p>
                   )}
-                  <InputField
-                    label="Email/Username"
-                    key={index}
-                    value={email}
-                    onChange={(e) => {
-                      const inputtedValue = (e?.target as HTMLInputElement)
-                        ?.value;
-                      changeValue(index, {
-                        email: inputtedValue,
-                        password
-                      });
-                    }}
-                  />
-                  <InputField
-                    label="Password"
-                    key={index}
-                    value={password}
-                    onChange={(e) => {
-                      const inputtedValue = (e?.target as HTMLInputElement)
-                        ?.value;
-                      changeValue(index, {
-                        email,
-                        password: inputtedValue
-                      });
-                    }}
-                  />
                 </div>
-              ))}
-            </div>
+              )}
+            />
           )}
           <div className="flex justify-between">
             <Button
@@ -522,6 +502,19 @@ const Add = () => {
             </Button>
             {type === "log" && (
               <Button
+                onClick={() => {
+                  const logValues = getValues("logs") || [];
+                  const error = validateLogs(logValues);
+                  if (error) {
+                    setError("logs", {
+                      type: "custom",
+                      message: error
+                    });
+                    toast.error(error);
+                    return;
+                  }
+                  setValue("logs", [...logValues, logInitialValue]);
+                }}
                 type="button"
                 buttonType="default"
                 className="border-primary border bg-transparent"

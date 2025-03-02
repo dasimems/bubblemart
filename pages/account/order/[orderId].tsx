@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import { productTypeClassName } from "../products";
+import Map from "@/components/general/Map";
 
 const OrderDetails = () => {
   const tableContentClassname = "text-sm py-4 px-3 text-center";
@@ -26,6 +27,7 @@ const OrderDetails = () => {
   >(null);
   const params = useParams();
   const { orderId } = params || {};
+  const contactInformation = orderDetails?.contactInformation;
   const goToSuccessPage = useCallback(
     (isAlreadyVerified?: boolean) => {
       push(
@@ -136,7 +138,9 @@ const OrderDetails = () => {
               />
               <div className="flex items-center gap-4">
                 <Button
-                  onClick={() => {}}
+                  onClick={() => {
+                    push(`/account/users/${orderDetails?.user?.id}`);
+                  }}
                   buttonType="secondary"
                   className="text-white"
                 >
@@ -145,6 +149,41 @@ const OrderDetails = () => {
               </div>
             </div>
           </div>
+          {contactInformation && (
+            <>
+              <div className="flex flex-col gap-6 rounded-xl bg-white shadow-md p-8 py-10 ">
+                <h1 className="font-bold">Contact details</h1>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  <OrderDetailsCard
+                    title="Sender name"
+                    value={contactInformation?.senderName || ""}
+                  />
+                  <OrderDetailsCard
+                    title="Receiver name"
+                    value={contactInformation?.receiverName || ""}
+                  />
+                  <OrderDetailsCard
+                    title="Receiver Address"
+                    value={contactInformation?.receiverAddress || ""}
+                  />
+                  <OrderDetailsCard
+                    title="Receiver Mobile number"
+                    value={contactInformation?.receiverPhoneNumber || ""}
+                  />
+                </div>
+                {contactInformation?.shortNote && (
+                  <OrderDetailsCard
+                    title="Short note"
+                    value={contactInformation?.shortNote || ""}
+                  />
+                )}
+              </div>
+              <Map
+                longitude={contactInformation?.longitude || 0}
+                latitude={contactInformation?.latitude || 0}
+              />
+            </>
+          )}
           <div className="w-full flex flex-col gap-10">
             <h1 className="text-2xl font-semibold">
               Order items ({orderDetails?.cartItems?.length || 0})
