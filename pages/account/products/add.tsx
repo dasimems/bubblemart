@@ -232,7 +232,8 @@ const Add = () => {
           logs: (logs || []).filter(
             (logDetails) =>
               logDetails && logDetails.email && logDetails.password
-          )
+          ),
+          quantity: (logs || []).length
         };
       }
       try {
