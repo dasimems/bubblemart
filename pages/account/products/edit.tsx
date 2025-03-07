@@ -298,7 +298,7 @@ const EditProducts = () => {
 
   return (
     <AccountContentLayout>
-      <h1 className="font-bold">Add {productType}</h1>
+      <h1 className="font-bold">Edit {productType}</h1>
       {productType && (
         <div className="grid grid-cols-1 md:grid-cols-2">
           <form
