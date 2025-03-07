@@ -26,6 +26,9 @@ export type CartDetailsType = {
   totalPrice: AmountType;
   isAvailable?: boolean;
   quantity: number;
+  deliveredAt?: Date;
+  paidAt?: Date;
+  createdAt?: Date;
 };
 
 const removeDuplicateCarts = (

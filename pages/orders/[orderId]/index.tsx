@@ -155,22 +155,21 @@ const OrderDetails = () => {
                       </div>
 
                       <div className="">
-                        {orderDetails?.deliveredAt && (
+                        {item?.deliveredAt && (
                           <span className="text-xs bg-green-100 py-2 px-3 rounded-md text-green-900">
                             DELIVERED
                           </span>
                         )}
-                        {orderDetails?.paidAt && !orderDetails?.deliveredAt && (
+                        {item?.paidAt && !item?.deliveredAt && (
                           <span className="text-xs bg-primary-900 py-2 px-3 rounded-md text-primary-100">
                             PAID
                           </span>
                         )}
-                        {!orderDetails?.paidAt &&
-                          !orderDetails?.deliveredAt && (
-                            <span className="text-xs bg-secondary-900 py-2 px-3 rounded-md text-secondary-300">
-                              PENDING
-                            </span>
-                          )}
+                        {!item?.paidAt && !item?.deliveredAt && (
+                          <span className="text-xs bg-secondary-900 py-2 px-3 rounded-md text-secondary-300">
+                            PENDING
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
