@@ -233,7 +233,7 @@ const EditProducts = () => {
         updateProduct(content);
 
         toast.success("Product updated successfully");
-        push(`/products/${id}`);
+        push(`/account/products/${id}`);
       } catch (error) {
         toast.error(
           constructErrorMessage(
