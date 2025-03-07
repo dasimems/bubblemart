@@ -196,6 +196,25 @@ const ProductCard: React.FC<
                   value={productCount?.toString()}
                   inputClassName="bg-primary-950 border-none text-center w-36"
                   placeholder=" "
+                  onChange={(e) => {
+                    let { value } = e.target as HTMLInputElement;
+                    if (!value) {
+                      value = "0";
+                    }
+                    if (isNaN(Number(value))) {
+                      return;
+                    }
+                    const inputtedQuantity = parseInt(value);
+                    if (inputtedQuantity > quantity) {
+                      return toast(
+                        "You can't add more than the available quantity",
+                        {
+                          toastId: toastIds.addToCartError
+                        }
+                      );
+                    }
+                    setProductCount(inputtedQuantity);
+                  }}
                   rightButtonClassName="right-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
                   leftButtonClassName="left-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
                   rightIcon={
@@ -248,6 +267,26 @@ const ProductCard: React.FC<
                     value={productCount?.toString()}
                     inputClassName="bg-primary-950 border-none text-center w-36"
                     placeholder=" "
+                    onChange={(e) => {
+                      let { value } = e.target as HTMLInputElement;
+                      if (!value) {
+                        value = "0";
+                      }
+                      if (isNaN(Number(value))) {
+                        return;
+                      }
+                      const inputtedQuantity = parseInt(value);
+                      if (inputtedQuantity > quantity) {
+                        return toast(
+                          "You can't add more than the available quantity",
+                          {
+                            toastId: toastIds.addToCartError
+                          }
+                        );
+                      }
+                      setHasUpdatedPerfumeCount(true);
+                      setProductCount(inputtedQuantity);
+                    }}
                     rightButtonClassName="right-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
                     leftButtonClassName="left-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
                     rightIcon={
@@ -264,7 +303,7 @@ const ProductCard: React.FC<
                       if (isAddingToCart) {
                         return;
                       }
-                      if (productCount === quantity) {
+                      if (productCount >= quantity) {
                         return toast(
                           "You can't add more than the available quantity"
                         );
@@ -273,9 +312,7 @@ const ProductCard: React.FC<
                         prevState >= quantity ? quantity : prevState + 1
                       );
 
-                      if (isCart && productCount !== quantity) {
-                        setHasUpdatedPerfumeCount(true);
-                      }
+                      setHasUpdatedPerfumeCount(true);
                     }}
                     leftIconAction={() => {
                       if (isAddingToCart) {
@@ -284,7 +321,7 @@ const ProductCard: React.FC<
                       setProductCount((prevState) =>
                         prevState > 1 ? prevState - 1 : 1
                       );
-                      if (isCart && productCount !== quantity) {
+                      if (productCount <= quantity) {
                         setHasUpdatedPerfumeCount(true);
                       }
                     }}

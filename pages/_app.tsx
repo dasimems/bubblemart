@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import AccountLayout from "@/components/layouts/AccountLayout";
 import ApplicationWrapper from "@/components/layouts/ApplicationWrapper";
 import CustomToast from "@/components/ui/customToast/CustomToast";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 export type AppEngineProps = AppProps & {
   Component: {
     title?: string;
@@ -25,6 +26,8 @@ export type AppEngineProps = AppProps & {
   };
 };
 
+const queryClient = new QueryClient();
+
 export default function App({ Component, pageProps }: AppEngineProps) {
   const { pathname } = useRouter();
   const isAuthRoute = pathname.includes("/auth/");
@@ -33,11 +36,11 @@ export default function App({ Component, pageProps }: AppEngineProps) {
     aos.init({
       once: true,
       easing: "ease-in-out",
-      duration: 1000,
+      duration: 1000
     });
   }, []);
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <NextNProgress color="#0A434F" height={3.5} />
       <SEO
         title={Component?.title}
@@ -62,6 +65,6 @@ export default function App({ Component, pageProps }: AppEngineProps) {
       </ApplicationWrapper>
 
       <CustomToast />
-    </>
+    </QueryClientProvider>
   );
 }

@@ -7,27 +7,53 @@ import { getData } from "@/api";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import { constructErrorMessage } from "../../../utils/functions";
+import { useQuery } from "@tanstack/react-query";
 
 export type ProductsPropsType = {
   hideTitle?: boolean;
 };
 
 const Products: React.FC<ProductsPropsType> = ({ hideTitle }) => {
+  const { isPending, error, data, refetch } = useQuery({
+    queryKey: ["landing-products"],
+    queryFn: () =>
+      getData<ApiCallResponseType<ProductDetailsType[]>>("/product?max=6")
+  });
+
   const [products, setProducts] = useState<ProductDetailsType[] | null>(null);
   const [productsFetchingError, setProductsFetchingError] = useState<
     string | null
   >(null);
 
-  const getProducts = useCallback(async () => {
-    setProductsFetchingError(null);
-    setProducts(null);
-    try {
-      const { data } = await getData<ApiCallResponseType<ProductDetailsType[]>>(
-        "/product?max=6"
-      );
-      const { data: content } = data;
-      setProducts(content);
-    } catch (error) {
+  // const getProducts = useCallback(async () => {
+  //   setProductsFetchingError(null);
+  //   setProducts(null);
+  //   try {
+  //     const { data } = await getData<ApiCallResponseType<ProductDetailsType[]>>(
+  //       "/product?max=6"
+  //     );
+  //     const { data: content } = data;
+  //     setProducts(content);
+  //   } catch (error) {
+  //     setProductsFetchingError(
+  //       constructErrorMessage(
+  //         error as ApiErrorResponseType,
+  //         "Error encountered whilst fetching product list!"
+  //       )
+  //     );
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   getProducts();
+  // }, [getProducts]);
+
+  useEffect(() => {
+    setProducts(data?.data?.data || null);
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
       setProductsFetchingError(
         constructErrorMessage(
           error as ApiErrorResponseType,
@@ -35,12 +61,7 @@ const Products: React.FC<ProductsPropsType> = ({ hideTitle }) => {
         )
       );
     }
-  }, []);
-
-  useEffect(() => {
-    getProducts();
-  }, [getProducts]);
-
+  }, [error]);
   return (
     <SectionContainer contentContainerClassName="gap-10 flex flex-col">
       {!hideTitle && (
@@ -73,10 +94,7 @@ const Products: React.FC<ProductsPropsType> = ({ hideTitle }) => {
           </div>
         )}
       {productsFetchingError && (
-        <ErrorContainer
-          error={productsFetchingError}
-          retryFunction={getProducts}
-        />
+        <ErrorContainer error={productsFetchingError} retryFunction={refetch} />
       )}
     </SectionContainer>
   );
