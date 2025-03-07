@@ -188,7 +188,7 @@ const ProductDetails = () => {
               <Button
                 disabled={!productDetails}
                 onClick={() => {
-                  push(`/account/edit?id=${productDetails?.id}`);
+                  push(`/account/products/edit?id=${productDetails?.id}`);
                 }}
                 buttonType="primary"
                 className={buttonClassName}
