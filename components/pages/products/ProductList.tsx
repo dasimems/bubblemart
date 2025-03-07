@@ -17,7 +17,10 @@ const ProductList: React.FC<ProductsPropsType> = ({ hideTitle }) => {
   const [productsFetchingError, setProductsFetchingError] = useState<
     string | null
   >(null);
-  const { productType } = useParams<{ productType?: "gifts" | "logs" }>() || {};
+  let { productType } = useParams<{ productType?: "gifts" | "logs" }>() || {};
+  if (productType !== "gifts" && productType !== "logs") {
+    productType = "logs";
+  }
   const {
     giftProducts,
     logProducts,
