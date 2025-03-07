@@ -26,6 +26,7 @@ export type ProductStoreType = {
   fetchingLogProductsError: string | null;
   isNextLogProductLoading: boolean;
   setLogProducts: (product: ProductDetailsType[] | null) => void;
+  updateProduct: (product: ProductDetailsType) => void;
   setFetchingLogProductsError: (error?: string | null) => void;
   isLoadingNextLogProducts: () => void;
   removeProduct: (id: string) => void;
@@ -52,7 +53,17 @@ const useProductStore = create<ProductStoreType>((set) => ({
   isLoadingNextGiftProducts: () => {
     set({ isNextLogProductLoading: true });
   },
-
+  updateProduct: (product) => {
+    set((prevState) => ({
+      ...prevState,
+      logProducts: prevState?.logProducts?.map((savedProduct) =>
+        product?.id === savedProduct?.id ? product : savedProduct
+      ),
+      giftProducts: prevState?.logProducts?.map((savedProduct) =>
+        product?.id === savedProduct?.id ? product : savedProduct
+      )
+    }));
+  },
   setLogProducts: (logProducts) => {
     set({ logProducts, isNextLogProductLoading: false });
   },
@@ -64,6 +75,7 @@ const useProductStore = create<ProductStoreType>((set) => ({
   },
   removeProduct: (id: string) => {
     set((prevState) => ({
+      ...prevState,
       logProducts: prevState?.logProducts?.filter(
         (product) => product?.id !== id
       ),
