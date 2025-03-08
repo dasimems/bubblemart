@@ -4,42 +4,40 @@ import React, { useCallback, useEffect, useState } from "react";
 import { AvatarImage } from "@/assets/images";
 import { UserDetailsType } from "@/store/useUserStore";
 import { useParams } from "next/navigation";
-import { constructErrorMessage } from "@/utils/functions";
+import { constructErrorMessage, generateCacheKey } from "@/utils/functions";
 import { getData } from "@/api";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import { OrderDetailsCard } from "@/pages/orders/[orderId]";
 import moment from "moment";
+import { useQuery } from "@tanstack/react-query";
 
 const UserDetails = () => {
-  const [userDetails, setUserDetails] = useState<UserDetailsType | null>(null);
-  const [userDetailsError, setUserDetailsError] = useState<string | null>(null);
   const params = useParams();
   const { userId } = params || {};
-  const getUserDetails = useCallback(async () => {
-    if (!userId) {
-      setUserDetailsError("User id is required");
-      return;
-    }
-    setUserDetailsError(null);
-    setUserDetails(null);
-    try {
-      const { data } = await getData<ApiCallResponseType<UserDetailsType>>(
-        `/user/${userId}`
-      );
-      const { data: content } = data;
-      setUserDetails(content);
-    } catch (error) {
+  const [userDetails, setUserDetails] = useState<UserDetailsType | null>(null);
+  const [userDetailsError, setUserDetailsError] = useState<string | null>(
+    !userId ? "User id not found!" : null
+  );
+  const { isPending, error, data, refetch } = useQuery({
+    queryKey: [generateCacheKey(userId?.toString()).details],
+    queryFn: () =>
+      getData<ApiCallResponseType<UserDetailsType>>(`/user/${userId}`),
+    enabled: !!userId
+  });
+  useEffect(() => {
+    setUserDetails(data?.data?.data || null);
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
       setUserDetailsError(
         constructErrorMessage(
           error as ApiErrorResponseType,
-          "Error encountered whilst fetching user details!"
+          "Error encountered whilst fetching product list!"
         )
       );
     }
-  }, [userId]);
-  useEffect(() => {
-    getUserDetails();
-  }, [getUserDetails, userId]);
+  }, [error]);
   return (
     <AccountContentLayout>
       <div className="flex gap-10 items-center justify-between">
@@ -101,10 +99,7 @@ const UserDetails = () => {
         </div>
       )}
       {userDetailsError && (
-        <ErrorContainer
-          error={userDetailsError}
-          retryFunction={getUserDetails}
-        />
+        <ErrorContainer error={userDetailsError} retryFunction={refetch} />
       )}
     </AccountContentLayout>
   );
