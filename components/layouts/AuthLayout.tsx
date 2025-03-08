@@ -26,7 +26,7 @@ const AuthLayout: React.FC<{
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2">
-      <div className="h-screen bg-gradient-to-b from-primary-900 to-white to-90% min-h-screen gap-32 flex flex-col items-center justify-center pt-10 md:pt-40">
+      <div className="h-screen hidden bg-gradient-to-b from-primary-900 to-white to-90% min-h-screen gap-32 md:flex flex-col items-center justify-center pt-10 md:pt-40">
         <Image
           alt="Auth"
           src={SVGImage || LoginSvgImage}
