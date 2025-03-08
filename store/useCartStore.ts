@@ -86,6 +86,7 @@ const useCartStore = create<CartStoreType>((set) => ({
         (cart) => cart?.productDetails?.type === "gift"
       );
       return {
+        ...prevState,
         carts: removeDuplicateCarts(allCart),
         isNextCartLoading: false,
         cartFetchingError: null,
