@@ -1,4 +1,4 @@
-import { postData, putData } from "@/api";
+import { deleteData, postData, putData } from "@/api";
 import { ProductImage } from "@/assets/images";
 import Button from "@/components/Button";
 import InputField from "@/components/general/InputField";
@@ -9,7 +9,7 @@ import { CartDetailsType } from "@/store/useCartStore";
 import { ProductDetailsType } from "@/store/useProductStore";
 import { constructErrorMessage } from "@/utils/functions";
 import { toastIds } from "@/utils/variables";
-import { MinusIcon, PlusIcon } from "lucide-react";
+import { MinusIcon, PlusIcon, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -26,6 +26,7 @@ const ProductCard: React.FC<
     isCart?: boolean;
     cartQuantity?: number;
     totalPrice?: AmountType;
+    cartId: string;
   }
 > = ({
   name,
@@ -37,10 +38,12 @@ const ProductCard: React.FC<
   quantity,
   isCart,
   cartQuantity,
-  totalPrice
+  totalPrice,
+  cartId
 }) => {
+  const [deletingCartItem, setDeletingCartItem] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const { updateCart } = useCart();
+  const { updateCart, removeCart } = useCart();
   const { push, asPath } = useRouter();
   const { userToken, userDetails } = useUser();
   const [hasUpdatedPerfumeCount, setHasUpdatedPerfumeCount] = useState(false);
@@ -76,7 +79,7 @@ const ProductCard: React.FC<
     } finally {
       setIsAddingToCart(false);
     }
-  }, [id, productCount, userToken, push, name, updateCart, type]);
+  }, [id, productCount, userToken, push, name, updateCart]);
 
   const updateProduct = useCallback(
     async (quantity: number) => {
@@ -117,19 +120,35 @@ const ProductCard: React.FC<
     [id, userToken, push, name, asPath, cartQuantity, updateCart]
   );
 
+  const deleteCartItem = useCallback(async () => {
+    if (deletingCartItem) {
+      return;
+    }
+    if (!cartId) {
+      return toast.error("No cart id found!");
+    }
+    setDeletingCartItem(true);
+    try {
+      await deleteData(`/cart/${cartId}`);
+      removeCart(cartId);
+    } catch (error) {
+      toast.error(
+        constructErrorMessage(
+          error as ApiErrorResponseType,
+          "Unknown error occurred whilst deleting cart item!"
+        )
+      );
+    } finally {
+      setDeletingCartItem(false);
+    }
+  }, [cartId, deletingCartItem, removeCart]);
+
   const debouncedUpdateCart = useDebouncedCallback(
     // function
     (quantity: number) => {
       updateProduct(quantity);
     },
     1500
-  );
-
-  console.log(
-    "hasUpdatedPerfumeCount",
-    hasUpdatedPerfumeCount,
-    productCount,
-    isCart
   );
 
   useEffect(() => {
@@ -139,13 +158,23 @@ const ProductCard: React.FC<
   }, [cartQuantity, isCart]);
 
   useEffect(() => {
-    if (isCart && productCount && hasUpdatedPerfumeCount) {
+    if (isCart && productCount && hasUpdatedPerfumeCount && !deletingCartItem) {
       debouncedUpdateCart(productCount);
     }
-  }, [productCount, isCart, hasUpdatedPerfumeCount, debouncedUpdateCart]);
+  }, [
+    productCount,
+    isCart,
+    hasUpdatedPerfumeCount,
+    debouncedUpdateCart,
+    deletingCartItem
+  ]);
 
   return (
-    <div className="flex flex-col sm:flex-row items-stretch rounded-3xl border shadow-md p-10 gap-10 bg-white border-slate-300">
+    <div
+      className={`flex flex-col sm:flex-row items-stretch rounded-3xl border shadow-md p-10 gap-10 bg-white border-slate-300 ${
+        deletingCartItem && "opacity-30"
+      }`}
+    >
       <div className=" w-full sm:w-1/3 md:w-3/6 h-[clamp(15rem,18vw,18rem)] shrink-0 bg-slate-200 rounded-2xl overflow-hidden relative">
         <Image
           alt={`${name}-${description}`}
@@ -153,12 +182,23 @@ const ProductCard: React.FC<
           fill
           className="object-cover object-center"
         />
+        {isCart && (
+          <button
+            title={`Delete ${name} from cart`}
+            aria-label={`Delete ${name} from cart`}
+            disabled={deletingCartItem}
+            onClick={deleteCartItem}
+            className="size-7 bg-red-100 text-red-600 rounded-md z-10 inline-flex items-center justify-center absolute top-3 left-3"
+          >
+            <Trash2 size={14} />
+          </button>
+        )}
       </div>
       <div className="flex flex-col md:justify-between flex-1 gap-6">
         <div className="flex flex-col gap-1">
-          <p className="text-primary-800">
+          {/* <p className="text-primary-800">
             {type === "gift" ? "Edible gifts" : ""}
-          </p>
+          </p> */}
           <h1 className="font-bold text-[clamp(1rem,5vw,1.5rem)] text-primary">
             {name}
           </h1>
@@ -266,7 +306,7 @@ const ProductCard: React.FC<
                 >
                   <InputField
                     className="self-start"
-                    disabled={isAddingToCart}
+                    disabled={isAddingToCart || deletingCartItem}
                     value={productCount?.toString()}
                     inputClassName="bg-primary-950 border-none text-center w-36"
                     placeholder=" "
@@ -303,7 +343,7 @@ const ProductCard: React.FC<
                       </span>
                     }
                     rightIconAction={() => {
-                      if (isAddingToCart) {
+                      if (isAddingToCart || deletingCartItem) {
                         return;
                       }
                       if (productCount >= quantity) {
@@ -318,15 +358,16 @@ const ProductCard: React.FC<
                       setHasUpdatedPerfumeCount(true);
                     }}
                     leftIconAction={() => {
-                      if (isAddingToCart) {
+                      if (isAddingToCart || deletingCartItem) {
                         return;
                       }
-                      setProductCount((prevState) =>
-                        prevState > 1 ? prevState - 1 : 1
-                      );
-                      if (productCount <= quantity) {
-                        setHasUpdatedPerfumeCount(true);
-                      }
+                      setProductCount((prevState) => {
+                        const newCount = prevState - 1;
+                        if (newCount && productCount <= quantity) {
+                          setHasUpdatedPerfumeCount(true);
+                        }
+                        return newCount || 1;
+                      });
                     }}
                   />
                   {isAddingToCart && (

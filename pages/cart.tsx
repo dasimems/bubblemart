@@ -1,4 +1,4 @@
-import { postData } from "@/api";
+import { deleteData, postData } from "@/api";
 import Button from "@/components/Button";
 import InputField from "@/components/general/InputField";
 import ProductCardLoader from "@/components/general/ProductCardLoader";
@@ -43,7 +43,7 @@ const Cart = () => {
   const { updateOrder } = useOrder();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [orderStatus, setOrderStatus] = useState<string | null>(null);
-
+  const [clearingCart, setClearingCart] = useState(false);
   const {
     register,
     handleSubmit,
@@ -120,6 +120,28 @@ const Cart = () => {
     [setError, updateOrder, clearCart]
   );
 
+  const clearCartList = useCallback(async () => {
+    if (clearingCart) {
+      return;
+    }
+    setClearingCart(true);
+    setOrderStatus("Clearing cart...");
+    try {
+      await deleteData(`/cart`);
+      clearCart();
+    } catch (error) {
+      toast.error(
+        constructErrorMessage(
+          error as ApiErrorResponseType,
+          "Unknown error occurred whilst clearing cart!"
+        )
+      );
+    } finally {
+      setClearingCart(false);
+      setOrderStatus(null);
+    }
+  }, [clearCart]);
+
   useEffect(() => {
     if (userToken && !carts) {
       getCart();
@@ -127,15 +149,15 @@ const Cart = () => {
   }, [getCart, userToken, carts]);
 
   useEffect(() => {
-    if (isCheckingOut && window) {
+    if ((isCheckingOut || clearingCart) && window) {
       window.scrollTo({
         top: 0,
         behavior: "smooth"
       });
     }
-  }, [isCheckingOut]);
+  }, [isCheckingOut, clearingCart]);
 
-  if (isCheckingOut) {
+  if (isCheckingOut || clearingCart) {
     return (
       <div className="w-screen h-[calc(100vh-25rem)] items-center justify-center flex flex-col gap-3">
         <Spinner />
@@ -150,13 +172,25 @@ const Cart = () => {
         (!carts && !cartFetchingError)) && (
         <form onSubmit={handleSubmit(checkout)} className="w-full relative">
           <SectionContainer contentContainerClassName="flex flex-col gap-10">
-            <div className="flex items-center">
+            <div className="flex items-center justify-between">
               <button onClick={back} className="inline-flex items-center gap-1">
                 <span>
                   <FaAngleLeft />
                 </span>
                 <span>Back</span>
               </button>
+
+              {carts && carts?.length > 0 && !cartFetchingError && (
+                <button
+                  disabled={clearingCart}
+                  onClick={clearCartList}
+                  aria-label="clear cart"
+                  title="clear cart"
+                  className="text-red-700 underline"
+                >
+                  Clear Cart
+                </button>
+              )}
             </div>
 
             <div className="grid grid-cols-1 min-[1225px]:grid-cols-2 gap-10 md:gap-20 items-start">
@@ -168,6 +202,7 @@ const Cart = () => {
                       key={id}
                       id={productDetails?.id}
                       isCart
+                      cartId={id}
                       type={productDetails?.type}
                       cartQuantity={quantity}
                       totalPrice={totalPrice}

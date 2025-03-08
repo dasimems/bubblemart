@@ -65,7 +65,7 @@ export type CartStoreType = {
   setCartFetchingError: (error?: string | null) => void;
   isFetchingNextCart: () => void;
   setCartNeedAddress: (needed: boolean) => void;
-
+  removeCart: (id: string) => void;
   updateCart: (cart: CartDetailsType) => void;
   clearCart: () => void;
 };
@@ -137,11 +137,27 @@ const useCartStore = create<CartStoreType>((set) => ({
       };
     });
   },
+  removeCart: (id: string) => {
+    set((prevState) => {
+      const newCart = (prevState?.carts || [])?.filter(
+        (cart) => cart.id !== id
+      );
+      const giftTypeCart = newCart?.find(
+        (cart) => cart?.productDetails?.type === "gift"
+      );
+      return {
+        ...prevState,
+        carts: removeDuplicateCarts(newCart),
+        doCartNeedAddress: !!giftTypeCart
+      };
+    });
+  },
   clearCart: () => {
     set({
-      carts: null,
+      carts: [],
       cartFetchingError: null,
-      isNextCartLoading: false
+      isNextCartLoading: false,
+      doCartNeedAddress: false
     });
   }
 }));
