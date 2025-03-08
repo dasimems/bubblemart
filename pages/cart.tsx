@@ -140,7 +140,7 @@ const Cart = () => {
       setClearingCart(false);
       setOrderStatus(null);
     }
-  }, [clearCart]);
+  }, [clearCart, clearingCart]);
 
   useEffect(() => {
     if (userToken && !carts) {
