@@ -26,7 +26,7 @@ const ProductCard: React.FC<
     isCart?: boolean;
     cartQuantity?: number;
     totalPrice?: AmountType;
-    cartId: string;
+    cartId?: string;
   }
 > = ({
   name,
