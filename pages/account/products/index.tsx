@@ -9,7 +9,13 @@ import useProduct from "@/hooks/useProduct";
 import useUser from "@/hooks/useUser";
 import { ProductDetailsType, ProductType } from "@/store/useProductStore";
 import { constructErrorMessage } from "@/utils/functions";
-import { EllipsisVertical, EyeIcon, PenSquare, TrashIcon } from "lucide-react";
+import {
+  EllipsisVertical,
+  EyeIcon,
+  File,
+  PenSquare,
+  TrashIcon
+} from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -204,7 +210,11 @@ const Products = () => {
                                 "DD, MMMM YYYY hh:mm A"
                               )}
                             </td>
-                            <td className={tableContentClassname}>
+                            <td
+                              className={`${tableContentClassname} ${
+                                !product?.quantity && "text-red-500 font-bold"
+                              }`}
+                            >
                               {product?.quantity}
                             </td>
                             <td className={tableContentClassname}>
@@ -243,6 +253,21 @@ const Products = () => {
                                             <span>View</span>
                                           </Link>
                                         </li>
+                                        {type === "log" && (
+                                          <li
+                                            className={actionContentClassName}
+                                          >
+                                            <Link
+                                              href={`/account/products/logs/${product?.id}`}
+                                              className={actionButtonClassName}
+                                            >
+                                              <span>
+                                                <File size={15} />
+                                              </span>
+                                              <span>Logs</span>
+                                            </Link>
+                                          </li>
+                                        )}
                                         <li className={actionContentClassName}>
                                           <Link
                                             href={`/account/products/edit?id=${product?.id}`}

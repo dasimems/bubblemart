@@ -6,6 +6,7 @@ import { siteName } from "@/utils/variables";
 import Link from "next/link";
 import Button from "../Button";
 import {
+  File,
   FileText,
   LayoutDashboard,
   LogOut,
@@ -188,6 +189,17 @@ const Nav = () => {
                       </Link>
                     </li>
                     <li className="w-full">
+                      <Link
+                        className="w-full flex items-center gap-1 hover:bg-primary-900 hover:pl-7 duration-300 py-3 px-5"
+                        href="/logs"
+                      >
+                        <span className="opacity-70">
+                          <File size={14} />
+                        </span>
+                        <span>Purchased logs</span>
+                      </Link>
+                    </li>
+                    <li className="w-full">
                       <button
                         onClick={() => {
                           logoutUser();
@@ -267,6 +279,13 @@ const Nav = () => {
               <li>
                 <Link href="/orders" className="text-primary">
                   Orders
+                </Link>
+              </li>
+            )}
+            {userToken && (
+              <li>
+                <Link href="/logs" className="text-primary">
+                  Purchased logs
                 </Link>
               </li>
             )}

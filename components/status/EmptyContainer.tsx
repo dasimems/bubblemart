@@ -8,11 +8,15 @@ const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 export type ErrorContainerProp = {
   description?: string;
   className?: string;
+  action?: () => void;
+  actionText?: string;
 };
 
 const EmptyContainer: React.FC<ErrorContainerProp> = ({
   description,
-  className
+  className,
+  action,
+  actionText
 }) => {
   return (
     <div
@@ -26,6 +30,16 @@ const EmptyContainer: React.FC<ErrorContainerProp> = ({
       />
       <div className="flex flex-col items-center gap-2 text-center -mt-14">
         <p className="opacity-60">{description || "No data found!"}</p>
+        {action && (
+          <button
+            onClick={action}
+            title={actionText}
+            aria-label={actionText}
+            className="text-primary underline"
+          >
+            {actionText || "Continue"}
+          </button>
+        )}
       </div>
     </div>
   );

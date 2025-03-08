@@ -114,9 +114,22 @@ const ProductDetails = () => {
           <div className="flex flex-col item-start gap-6">
             <div className="flex flex-col gap-2">
               {productDetails && (
-                <h1 className="text-2xl font-semibold">
-                  {productDetails?.name}
-                </h1>
+                <div className="flex items-center gap-10 justify-between">
+                  <h1 className="text-2xl font-semibold">
+                    {productDetails?.name}
+                  </h1>
+
+                  {productDetails?.type === "log" && (
+                    <Button
+                      buttonType="primary"
+                      onClick={() => {
+                        push(`/account/products/logs/${productId}`);
+                      }}
+                    >
+                      View logs
+                    </Button>
+                  )}
+                </div>
               )}
               {!productDetails && (
                 <div className={`${loadingClassName} h-3 w-44`} />

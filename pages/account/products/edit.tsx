@@ -52,11 +52,8 @@ const isImageFile = (file: File) => {
 };
 
 const validateLogs = (value?: LogBodyType[]) => {
-  if (!value) {
-    return "Please add at least one log";
-  }
-  if (value && value?.length < 1) {
-    return "Please add at least one log";
+  if (!value || (value && value?.length < 1)) {
+    return undefined;
   }
   const hasUnFilledValue = value.some((log) => !log.email || !log.password);
 
