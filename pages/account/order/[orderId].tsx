@@ -4,7 +4,7 @@ import AccountContentLayout from "@/components/layouts/AccountContentLayout";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import { OrderDetailsCard } from "@/pages/orders/[orderId]";
 import { OrderDetailsType } from "@/store/useOrderStore";
-import { constructErrorMessage } from "@/utils/functions";
+import { constructErrorMessage, generateCacheKey } from "@/utils/functions";
 import moment from "moment";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -12,21 +12,31 @@ import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import { productTypeClassName } from "../products";
 import Map from "@/components/general/Map";
+import { useQuery } from "@tanstack/react-query";
 
 const OrderDetails = () => {
+  const params = useParams();
+  const { orderId } = params || {};
   const tableContentClassname = "text-sm py-4 px-3 text-center";
   const loadingClassName = "animate-pulse h-3 bg-slate-300 rounded-md";
   const tableHeadTextStyle = `${tableContentClassname} font-medium`;
   const tableLoadingContentStyle = `${tableContentClassname} px-2`;
+
   const { push } = useRouter();
   const [orderDetails, setOrderDetails] = useState<OrderDetailsType | null>(
     null
   );
   const [orderDetailsError, setFetchingOrderDetailsError] = useState<
     string | null
-  >(null);
-  const params = useParams();
-  const { orderId } = params || {};
+  >(!orderId ? "Order id not found!" : null);
+  const { isPending, error, data, refetch } = useQuery({
+    queryKey: [generateCacheKey(orderId?.toString()).details],
+    queryFn: () =>
+      getData<ApiCallResponseType<OrderDetailsType>>(
+        `/order/${orderId}?isAdmin=true`
+      ),
+    enabled: !!orderId
+  });
   const contactInformation = orderDetails?.contactInformation;
   const goToSuccessPage = useCallback(
     (isAlreadyVerified?: boolean) => {
@@ -38,30 +48,20 @@ const OrderDetails = () => {
     },
     [orderId, push, orderDetails]
   );
-  const getOrderDetails = useCallback(async () => {
-    if (!orderId) {
-      return setFetchingOrderDetailsError("Order ID not found");
-    }
-    setFetchingOrderDetailsError(null);
-    setOrderDetails(null);
-    try {
-      const { data } = await getData<ApiCallResponseType<OrderDetailsType>>(
-        `/order/${orderId}?isAdmin=true`
-      );
-      const { data: orderContent } = data || {};
-      setOrderDetails(orderContent);
-    } catch (error) {
+  useEffect(() => {
+    setOrderDetails(data?.data?.data || null);
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
       setFetchingOrderDetailsError(
         constructErrorMessage(
           error as ApiErrorResponseType,
-          "Error encountered whilst fetching order details"
+          "Error encountered whilst fetching product list!"
         )
       );
     }
-  }, [orderId]);
-  useEffect(() => {
-    getOrderDetails();
-  }, [orderId, getOrderDetails]);
+  }, [error]);
   return (
     <AccountContentLayout>
       {!orderDetailsError && orderDetails && (
@@ -313,10 +313,7 @@ const OrderDetails = () => {
         </div>
       )}
       {orderDetailsError && (
-        <ErrorContainer
-          error={orderDetailsError}
-          retryFunction={getOrderDetails}
-        />
+        <ErrorContainer error={orderDetailsError} retryFunction={refetch} />
       )}
     </AccountContentLayout>
   );
