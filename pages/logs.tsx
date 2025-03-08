@@ -105,6 +105,9 @@ const Logs = () => {
         )
       );
     }
+    if (!error) {
+      setFetchingLogDetailsError(null);
+    }
   }, [error]);
 
   useEffect(() => {

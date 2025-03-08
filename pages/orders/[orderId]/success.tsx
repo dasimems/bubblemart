@@ -87,6 +87,9 @@ const OrderSuccessful = () => {
         )
       );
     }
+    if (!error) {
+      setVerifyingOrderError(null);
+    }
   }, [error]);
 
   useEffect(() => {

@@ -37,6 +37,9 @@ const UserDetails = () => {
         )
       );
     }
+    if (!error) {
+      setUserDetailsError(null);
+    }
   }, [error]);
   return (
     <AccountContentLayout>

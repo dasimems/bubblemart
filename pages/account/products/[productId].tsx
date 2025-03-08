@@ -100,6 +100,9 @@ const ProductDetails = () => {
         )
       );
     }
+    if (!error) {
+      setProductDetailsFetchingError(null);
+    }
   }, [error]);
 
   return (

@@ -61,6 +61,9 @@ const Products: React.FC<ProductsPropsType> = ({ hideTitle }) => {
         )
       );
     }
+    if (!error) {
+      setProductsFetchingError(null);
+    }
   }, [error]);
   return (
     <SectionContainer contentContainerClassName="gap-10 flex flex-col">

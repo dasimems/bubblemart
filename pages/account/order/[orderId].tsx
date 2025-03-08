@@ -61,6 +61,9 @@ const OrderDetails = () => {
         )
       );
     }
+    if (!error) {
+      setFetchingOrderDetailsError(null);
+    }
   }, [error]);
   return (
     <AccountContentLayout>

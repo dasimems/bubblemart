@@ -58,6 +58,9 @@ const LogList = () => {
         )
       );
     }
+    if (!error) {
+      setFetchingLogsError(null);
+    }
   }, [error]);
 
   useEffect(() => {
