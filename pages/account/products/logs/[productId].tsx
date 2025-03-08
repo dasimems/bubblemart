@@ -5,7 +5,7 @@ import LogCard from "@/components/pages/products/logs/LogCard";
 import EmptyContainer from "@/components/status/EmptyContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import { LogDetailsType } from "@/store/logStore";
-import { constructErrorMessage } from "@/utils/functions";
+import { constructErrorMessage, generateCacheKey } from "@/utils/functions";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
@@ -38,7 +38,7 @@ const LogList = () => {
     refetch,
     error
   } = useInfiniteQuery({
-    queryKey: [`logs-${productId}`],
+    queryKey: [generateCacheKey(productId?.toString()).logs],
     queryFn: ({ pageParam }) => fetchProducts({ pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
