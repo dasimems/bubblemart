@@ -65,7 +65,7 @@ const OrderDetails = () => {
   return (
     <AccountContentLayout>
       {!orderDetailsError && orderDetails && (
-        <div className="flex flex-col gap-14">
+        <div className="flex flex-col gap-14 pb-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="flex flex-col gap-6 rounded-xl bg-white shadow-md p-8 py-10 ">
               <h1 className="font-bold">Order details</h1>
@@ -190,7 +190,7 @@ const OrderDetails = () => {
             </h1>
             <table className="w-full">
               <thead>
-                <tr>
+                <tr className=" bg-white">
                   <th className={`${tableHeadTextStyle} w-[5rem]`}>S/N</th>
                   <th className={tableHeadTextStyle}>Product</th>
                   <th className={tableHeadTextStyle}>Date added</th>
