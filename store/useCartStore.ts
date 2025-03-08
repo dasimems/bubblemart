@@ -80,10 +80,17 @@ const initialValue = {
 const useCartStore = create<CartStoreType>((set) => ({
   ...initialValue,
   setCarts: (carts) => {
-    set({
-      carts: removeDuplicateCarts(carts),
-      isNextCartLoading: false,
-      cartFetchingError: null
+    set((prevState) => {
+      const allCart = [...(prevState.carts || []), ...carts];
+      const giftTypeCart = carts?.find(
+        (cart) => cart?.productDetails?.type === "gift"
+      );
+      return {
+        carts: removeDuplicateCarts(allCart),
+        isNextCartLoading: false,
+        cartFetchingError: null,
+        doCartNeedAddress: !!giftTypeCart
+      };
     });
   },
   setCartFetchingError: (cartFetchingError = null) => {
@@ -119,9 +126,13 @@ const useCartStore = create<CartStoreType>((set) => ({
       if (!previousCarts) {
         carts = [cart];
       }
+      const giftTypeCart = carts?.find(
+        (cart) => cart?.productDetails?.type === "gift"
+      );
       return {
         ...prevState,
-        carts: removeDuplicateCarts(carts)
+        carts: removeDuplicateCarts(carts),
+        doCartNeedAddress: !!giftTypeCart
       };
     });
   },

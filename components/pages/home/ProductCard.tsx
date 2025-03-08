@@ -40,7 +40,7 @@ const ProductCard: React.FC<
   totalPrice
 }) => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const { updateCart, setCartNeedAddress } = useCart();
+  const { updateCart } = useCart();
   const { push, asPath } = useRouter();
   const { userToken, userDetails } = useUser();
   const [hasUpdatedPerfumeCount, setHasUpdatedPerfumeCount] = useState(false);
@@ -66,7 +66,6 @@ const ProductCard: React.FC<
       });
       toast.success(`${name} added to cart!`);
       updateCart(data?.data);
-      setCartNeedAddress(type === "gift");
     } catch (error) {
       toast.error(
         constructErrorMessage(
@@ -77,16 +76,7 @@ const ProductCard: React.FC<
     } finally {
       setIsAddingToCart(false);
     }
-  }, [
-    id,
-    productCount,
-    userToken,
-    push,
-    name,
-    updateCart,
-    type,
-    setCartNeedAddress
-  ]);
+  }, [id, productCount, userToken, push, name, updateCart, type]);
 
   const updateProduct = useCallback(
     async (quantity: number) => {
@@ -94,10 +84,10 @@ const ProductCard: React.FC<
         return push(`/auth/login?redirect=${asPath}`);
       }
       if (!id) {
-        return;
+        return toast.error("No product id found!");
       }
       if (!quantity) {
-        return;
+        return toast.error("You can't add 0 quantity!");
       }
       setIsAddingToCart(true);
       try {
@@ -133,6 +123,13 @@ const ProductCard: React.FC<
       updateProduct(quantity);
     },
     1500
+  );
+
+  console.log(
+    "hasUpdatedPerfumeCount",
+    hasUpdatedPerfumeCount,
+    productCount,
+    isCart
   );
 
   useEffect(() => {
@@ -184,83 +181,89 @@ const ProductCard: React.FC<
         {!!quantity && (
           <>
             {!isCart && (
-              <div className={`flex flex-col gap-2`}>
-                <p className="text-primary-800">
-                  Quantity{" "}
-                  <span className="font-bold text-primary-100 text-sm">
-                    ({quantity})
-                  </span>
-                </p>
-                <InputField
-                  className="self-start"
-                  value={productCount?.toString()}
-                  inputClassName="bg-primary-950 border-none text-center w-36"
-                  placeholder=" "
-                  onChange={(e) => {
-                    let { value } = e.target as HTMLInputElement;
-                    if (!value) {
-                      value = "0";
-                    }
-                    if (isNaN(Number(value))) {
-                      return;
-                    }
-                    const inputtedQuantity = parseInt(value);
-                    if (inputtedQuantity > quantity) {
-                      return toast(
-                        "You can't add more than the available quantity",
-                        {
-                          toastId: toastIds.addToCartError
-                        }
-                      );
-                    }
-                    setProductCount(inputtedQuantity);
-                  }}
-                  rightButtonClassName="right-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
-                  leftButtonClassName="left-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
-                  rightIcon={
-                    <span className=" inline-flex">
-                      <PlusIcon />
+              <>
+                <div className={`flex flex-col gap-2`}>
+                  <p className="text-primary-800">
+                    Quantity{" "}
+                    <span className="font-bold text-primary-100 text-sm">
+                      ({quantity})
                     </span>
-                  }
-                  leftIcon={
-                    <span className=" inline-flex">
-                      <MinusIcon />
-                    </span>
-                  }
-                  rightIconAction={() => {
-                    if (productCount === quantity) {
-                      return toast(
-                        "You can't add more than the available quantity",
-                        {
-                          toastId: toastIds.addToCartError
-                        }
-                      );
+                  </p>
+                  <InputField
+                    className="self-start"
+                    value={productCount?.toString()}
+                    inputClassName="bg-primary-950 border-none text-center w-36"
+                    placeholder=" "
+                    onChange={(e) => {
+                      let { value } = e.target as HTMLInputElement;
+                      if (!value) {
+                        value = "0";
+                      }
+                      if (isNaN(Number(value))) {
+                        return;
+                      }
+                      const inputtedQuantity = parseInt(value);
+                      if (inputtedQuantity > quantity) {
+                        return toast(
+                          "You can't add more than the available quantity",
+                          {
+                            toastId: toastIds.addToCartError
+                          }
+                        );
+                      }
+                      setProductCount(inputtedQuantity);
+                    }}
+                    rightButtonClassName="right-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
+                    leftButtonClassName="left-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
+                    rightIcon={
+                      <span className=" inline-flex">
+                        <PlusIcon />
+                      </span>
                     }
-                    setProductCount((prevState) =>
-                      prevState >= quantity ? quantity : prevState + 1
-                    );
-                  }}
-                  leftIconAction={() =>
-                    setProductCount((prevState) =>
-                      prevState > 1 ? prevState - 1 : 1
-                    )
-                  }
-                />
-                <Button
-                  loading={isAddingToCart}
-                  disabled={!!userToken && !userDetails}
-                  onClick={addProductToCart}
-                  buttonType="primary"
-                  className="text-white text-center !rounded-full"
-                >
-                  Add to cart
-                </Button>
-              </div>
+                    leftIcon={
+                      <span className=" inline-flex">
+                        <MinusIcon />
+                      </span>
+                    }
+                    rightIconAction={() => {
+                      if (productCount === quantity) {
+                        return toast(
+                          "You can't add more than the available quantity",
+                          {
+                            toastId: toastIds.addToCartError
+                          }
+                        );
+                      }
+                      setProductCount((prevState) =>
+                        prevState >= quantity ? quantity : prevState + 1
+                      );
+                    }}
+                    leftIconAction={() =>
+                      setProductCount((prevState) =>
+                        prevState > 1 ? prevState - 1 : 1
+                      )
+                    }
+                  />
+                  <Button
+                    loading={isAddingToCart}
+                    disabled={!!userToken && !userDetails}
+                    onClick={addProductToCart}
+                    buttonType="primary"
+                    className="text-white text-center !rounded-full"
+                  >
+                    Add to cart
+                  </Button>
+                </div>
+              </>
             )}
             {isCart && (
               <div className="flex flex-col gap-2">
                 <p className="text-primary-800">Quantity</p>
-                <div className="relative w-auto w-full">
+                <div
+                  className={`relative ${
+                    isAddingToCart && "opacity-40 cursor-not-allowed"
+                  } w-full`}
+                >
                   <InputField
                     className="self-start"
                     disabled={isAddingToCart}

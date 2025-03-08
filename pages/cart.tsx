@@ -166,9 +166,12 @@ const Cart = () => {
                     <ProductCard
                       {...productDetails}
                       key={id}
+                      id={productDetails?.id}
                       isCart
+                      type={productDetails?.type}
                       cartQuantity={quantity}
                       totalPrice={totalPrice}
+                      quantity={productDetails?.quantity}
                     />
                   ))}
 
