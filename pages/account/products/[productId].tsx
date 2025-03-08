@@ -6,7 +6,8 @@ import Modal from "@/components/Modal";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import useProduct from "@/hooks/useProduct";
 import { ProductDetailsType } from "@/store/useProductStore";
-import { constructErrorMessage } from "@/utils/functions";
+import { constructErrorMessage, generateCacheKey } from "@/utils/functions";
+import { useQuery } from "@tanstack/react-query";
 import { PenSquare, TrashIcon } from "lucide-react";
 import moment from "moment";
 import Image from "next/image";
@@ -50,29 +51,18 @@ const ProductDetails = () => {
   const [openIsDeletingProductModal, setOpenIsDeletingProductModal] =
     useState(false);
   const [productDetailsFetchingError, setProductDetailsFetchingError] =
-    useState<string | null>(null);
+    useState<string | null>(!productId ? "Product id not found!" : null);
   const [productDetails, setProductDetails] =
     useState<ProductDetailsType | null>(null);
 
-  const getProductDetails = useCallback(async () => {
-    if (!productId) {
-      return setProductDetailsFetchingError("Product ID not found!");
-    }
-    setProductDetailsFetchingError(null);
-    try {
-      const { data } = await getData<ApiCallResponseType<ProductDetailsType>>(
+  const { isPending, error, data, refetch } = useQuery({
+    queryKey: [generateCacheKey(productId?.toString()).details],
+    queryFn: () =>
+      getData<ApiCallResponseType<ProductDetailsType>>(
         `/product/${productId}?isAdmin=true`
-      );
-      setProductDetails(data?.data);
-    } catch (error) {
-      setProductDetailsFetchingError(
-        constructErrorMessage(
-          error as ApiErrorResponseType,
-          "Unknown error occurred whilst fetching product details!"
-        )
-      );
-    }
-  }, [productId]);
+      ),
+    enabled: !!productId
+  });
 
   const deleteProduct = useCallback(async () => {
     if (!productId) {
@@ -98,8 +88,19 @@ const ProductDetails = () => {
   }, [productId, push, productDetails, removeProduct]);
 
   useEffect(() => {
-    getProductDetails();
-  }, [productId, getProductDetails]);
+    setProductDetails(data?.data?.data || null);
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      setProductDetailsFetchingError(
+        constructErrorMessage(
+          error as ApiErrorResponseType,
+          "Error encountered whilst fetching product list!"
+        )
+      );
+    }
+  }, [error]);
 
   return (
     <>
@@ -107,7 +108,7 @@ const ProductDetails = () => {
         {productDetailsFetchingError && (
           <ErrorContainer
             error={productDetailsFetchingError}
-            retryFunction={getProductDetails}
+            retryFunction={refetch}
           />
         )}
         {!productDetailsFetchingError && (
