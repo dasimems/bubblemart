@@ -48,7 +48,7 @@ const LogCard: React.FC<
         );
       }
     },
-    [id]
+    [id, refetch, reset]
   );
 
   const deleteLog = useCallback(async () => {
@@ -67,7 +67,7 @@ const LogCard: React.FC<
     } finally {
       setIsDeleting(false);
     }
-  }, [id]);
+  }, [id, refetch]);
 
   useEffect(() => {
     reset({
