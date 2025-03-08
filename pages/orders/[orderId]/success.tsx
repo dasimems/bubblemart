@@ -7,7 +7,8 @@ import SectionContainer from "@/components/layouts/SectionContainer";
 import ErrorContainer from "@/components/status/ErrorContainer";
 import protectRoute from "@/hooks/protectRoute";
 import { OrderDetailsType } from "@/store/useOrderStore";
-import { constructErrorMessage } from "@/utils/functions";
+import { constructErrorMessage, generateCacheKey } from "@/utils/functions";
+import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -51,11 +52,18 @@ const OrderSuccessful = () => {
   const param = useParams();
   const { orderId } = param || {};
   const [verifyingOrderError, setVerifyingOrderError] = useState<string | null>(
-    null
+    !orderId ? "No order id found!" : null
   );
   const [orderDetails, setOrderDetails] = useState<OrderDetailsType | null>(
     null
   );
+  const [shouldFetch, setShouldFetch] = useState(false);
+  const { isPending, error, data, refetch } = useQuery({
+    queryKey: [generateCacheKey(orderId?.toString()).payments],
+    queryFn: () =>
+      getData<ApiCallResponseType<OrderDetailsType>>(`/payment/${orderId}`),
+    enabled: shouldFetch
+  });
 
   const totalPrice = (orderDetails?.cartItems || [])?.reduce(
     (acc, { totalPrice }) => acc + (totalPrice?.whole || 0),
@@ -66,33 +74,24 @@ const OrderSuccessful = () => {
     currency: "NGN"
   }).format(totalPrice);
 
-  const verifyOrder = useCallback(async () => {
-    if (orderDetails) {
-      return;
-    }
-    if (!orderId) {
-      return setVerifyingOrderError("Unknown error occurred !");
-    }
-    setVerifyingOrderError(null);
-    try {
-      const { data } = await getData<ApiCallResponseType<OrderDetailsType>>(
-        `/payment/${orderId}`
-      );
-      const { data: orderData } = data;
-      setOrderDetails(orderData);
-    } catch (error) {
+  useEffect(() => {
+    setOrderDetails(data?.data?.data || null);
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
       setVerifyingOrderError(
         constructErrorMessage(
           error as ApiErrorResponseType,
-          "Unknown error occurred whilst fetching order!"
+          "Error encountered whilst fetching product list!"
         )
       );
     }
-  }, [orderDetails, orderId]);
+  }, [error]);
 
   useEffect(() => {
-    verifyOrder();
-  }, [orderId, verifyOrder]);
+    setShouldFetch(!!orderId && !data?.data?.data);
+  }, [orderId, data]);
 
   if (verifyingOrderError) {
     return (
