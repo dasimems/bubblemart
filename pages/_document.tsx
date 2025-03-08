@@ -3,7 +3,7 @@ import { Html, Head, Main, NextScript } from "next/document";
 export default function Document() {
   const schema = {
     "@context": "https://schema.org",
-    "@type": "JewelryStore",
+    "@type": "Store",
     name: "Bubblemart",
     image: "https://bubblemart.shop/logo.png",
     "@id": "https://bubblemart.shop",
