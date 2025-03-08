@@ -94,7 +94,7 @@ const LogList = () => {
               {fetchedLogs?.[0]?.productId?.name} Logs
             </h1>
           </div>
-          <div className="flex gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {fetchedLogs.map((item, index) => (
               <LogCard
                 {...item}

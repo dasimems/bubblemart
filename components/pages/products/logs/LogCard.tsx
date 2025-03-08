@@ -15,7 +15,7 @@ const defaultValues = {
 };
 
 const LogCard: React.FC<
-  LogDetailsType & { index: number; refetch: () => Promise<void> }
+  LogDetailsType & { index: number; refetch: <T>() => Promise<T | unknown> }
 > = ({
   id,
   email = "",
@@ -76,7 +76,7 @@ const LogCard: React.FC<
   return (
     <form
       onSubmit={handleSubmit(updateLog)}
-      className="flex flex-col gap-6 bg-white p-5 rounded-md w-full max-w-[40rem]"
+      className="flex flex-col gap-6 bg-white p-5 rounded-md"
     >
       <div className="flex gap-5 items-center justify-between w-full">
         <h1 className="font-bold">Log {index + 1}</h1>
