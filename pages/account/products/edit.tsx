@@ -85,7 +85,7 @@ const EditProducts = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting, isValid, isDirty },
     setError,
     setValue,
     watch,
@@ -484,7 +484,7 @@ const EditProducts = () => {
               <Button
                 className="self-start py-2"
                 buttonType="primary"
-                disabled={!isValid}
+                disabled={!isValid || !isDirty}
                 loading={isSubmitting}
               >
                 Update
