@@ -61,7 +61,7 @@ export default function Document() {
           name="keywords"
           content="Bubblemart - Log and gift Shopping, Bubblemart Log and gift Shopping, Social Logs, Facebook Logs, Facebook Log, Instagram Logs, Instagram Log, Twitter Log, Logins"
         />
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="manifest" href="/site.webmanifest" />
         <link rel="shortcut icon" href="/favicon-16x16.png" type="image/png" />
         <link rel="shortcut icon" href="/favicon-32x32.png" type="image/png" />
         <link
