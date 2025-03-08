@@ -37,9 +37,18 @@ const SEO: React.FC<SEOProps> = ({
           content={description ? description : SEODescription}
         />
 
-        <meta property="og:image" content={image ? image : "/meta_image.png"} />
-        <meta name="twitter:card" content={image ? image : "/meta_image.png"} />
-        <link rel="apple-touch-icon" href={image ? image : "/meta_image.png"} />
+        <meta
+          property="og:image"
+          content={image ? image : "https://bubblemart.shop/meta_image.png"}
+        />
+        <meta
+          name="twitter:card"
+          content={image ? image : "https://bubblemart.shop/meta_image.png"}
+        />
+        <link
+          rel="apple-touch-icon"
+          href={image ? image : "https://bubblemart.shop/meta_image.png"}
+        />
 
         <meta
           property="og:image:alt"
@@ -60,7 +69,7 @@ const SEO: React.FC<SEOProps> = ({
         />
         <meta
           name="twitter:image"
-          content={image ? image : "/meta_image.png"}
+          content={image ? image : "https://bubblemart.shop/meta_image.png"}
         />
       </Head>
       <Script
