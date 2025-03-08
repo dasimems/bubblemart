@@ -86,7 +86,6 @@ export default function Document() {
             content={process.env.NEXT_PUBLIC_GOOGLE_INDEX_VERIFICATION_ID}
           /> */}
       </Head>
-      <Head />
       <body className="font-satoshi">
         <h1 className="-z-[9999] opacity-0 fixed top-0 left-0">
           Website made by dasimems, Duyil Ayomid, Isaac Omonimewa
