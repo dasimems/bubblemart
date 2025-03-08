@@ -24,6 +24,14 @@ const LogCard: React.FC<
   refetch = async () => {}
 }) => {
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const {
+    handleSubmit,
+    formState: { isDirty, isValid, isSubmitting },
+    register,
+    reset
+  } = useForm({ defaultValues });
+
   const updateLog = useCallback(
     async (data: typeof defaultValues) => {
       try {
@@ -60,12 +68,6 @@ const LogCard: React.FC<
       setIsDeleting(false);
     }
   }, [id]);
-  const {
-    handleSubmit,
-    formState: { isDirty, isValid, isSubmitting },
-    register,
-    reset
-  } = useForm({ defaultValues });
 
   useEffect(() => {
     reset({
