@@ -171,11 +171,11 @@ const ProductCard: React.FC<
 
   return (
     <div
-      className={`flex flex-col sm:flex-row items-stretch rounded-3xl border shadow-md p-10 gap-10 bg-white border-slate-300 ${
+      className={`flex flex-col sm:flex-row items-stretch rounded-xl md:rounded-3xl border shadow-md p-2 md:p-10 gap-4 md:gap-10 bg-white border-slate-300 ${
         deletingCartItem && "opacity-30"
       }`}
     >
-      <div className=" w-full sm:w-1/3 md:w-3/6 h-[clamp(15rem,18vw,18rem)] shrink-0 bg-slate-200 rounded-2xl overflow-hidden relative">
+      <div className=" w-full sm:w-1/3 md:w-3/6 h-[clamp(10rem,18vw,18rem)] shrink-0 bg-slate-200 rounded-2xl overflow-hidden relative">
         <Image
           alt={`${name}-${description}`}
           src={image}
@@ -194,28 +194,30 @@ const ProductCard: React.FC<
           </button>
         )}
       </div>
-      <div className="flex flex-col md:justify-between flex-1 gap-6">
+      <div className="flex flex-col md:justify-between flex-1 gap-2 md:gap-6">
         <div className="flex flex-col gap-1">
           {/* <p className="text-primary-800">
             {type === "gift" ? "Edible gifts" : ""}
           </p> */}
-          <h1 className="font-bold text-[clamp(1rem,5vw,1.5rem)] text-primary">
+          <h1 className="font-bold text-[clamp(0.7rem,1.5vw,1.5rem)] text-primary">
             {name}
           </h1>
           {!isCart && (
-            <h1 className="font-bold text-[clamp(1rem,5vw,1.5rem)]">
+            <h1 className="font-bold text-[clamp(0.7rem,1.5vw,1.5rem)]">
               {amount?.formatted?.withCurrency}
             </h1>
           )}
           {isCart && (
-            <h1 className="font-bold text-[clamp(1rem,5vw,1.5rem)]">
+            <h1 className="font-bold text-[clamp(0.6rem,1.5vw,1.5rem)]">
               {totalPrice?.formatted?.withCurrency}
             </h1>
           )}
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-primary-800">Description</p>
-          <p>{description}</p>
+          <p className="text-primary-800 text-[0.7rem] md:text-base">
+            Description
+          </p>
+          <p className="text-[0.6rem] md:text-base">{description}</p>
         </div>
 
         {!!quantity && (
@@ -223,16 +225,16 @@ const ProductCard: React.FC<
             {!isCart && (
               <>
                 <div className={`flex flex-col gap-2`}>
-                  <p className="text-primary-800">
+                  <p className="text-primary-800 text-[0.7rem] md:text-base">
                     Quantity{" "}
-                    <span className="font-bold text-primary-100 text-sm">
+                    <span className="font-bold text-primary-100 md:text-sm">
                       ({quantity})
                     </span>
                   </p>
                   <InputField
-                    className="self-start"
+                    className="self-start w-full md:w-auto"
                     value={productCount?.toString()}
-                    inputClassName="bg-primary-950 border-none text-center w-36"
+                    inputClassName="bg-primary-950 border-none text-center w-full md:w-36 !py-1 md:!py-3 text-sm md:text-base"
                     placeholder=" "
                     onChange={(e) => {
                       let { value } = e.target as HTMLInputElement;
@@ -257,12 +259,12 @@ const ProductCard: React.FC<
                     leftButtonClassName="left-1 absolute -translate-y-1/2 top-1/2 h-[85%] px-1 border-slate-600 border rounded-md items-center inline-flex"
                     rightIcon={
                       <span className=" inline-flex">
-                        <PlusIcon />
+                        <PlusIcon className="size-3 md:size-5" />
                       </span>
                     }
                     leftIcon={
                       <span className=" inline-flex">
-                        <MinusIcon />
+                        <MinusIcon className="size-3 md:size-5" />
                       </span>
                     }
                     rightIconAction={() => {
@@ -289,7 +291,7 @@ const ProductCard: React.FC<
                     disabled={!!userToken && !userDetails}
                     onClick={addProductToCart}
                     buttonType="primary"
-                    className="text-white text-center !rounded-full"
+                    className="text-white !py-1 md:!py-3 text-center text-[0.5rem] md:text-base !rounded-full"
                   >
                     Add to cart
                   </Button>
@@ -382,7 +384,9 @@ const ProductCard: React.FC<
         )}
         {!quantity && (
           <div className="py-2 bg-red-100 px-5 self-start rounded-md">
-            <p className="text-red-700 text-sm font-medium">OUT OF STOCK</p>
+            <p className="text-red-700 text-xs md:text-sm font-medium">
+              OUT OF STOCK
+            </p>
           </div>
         )}
       </div>

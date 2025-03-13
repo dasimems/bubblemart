@@ -79,7 +79,7 @@ const Products: React.FC<ProductsPropsType> = ({ hideTitle }) => {
 
       {!productsFetchingError &&
         (!products || (products && products.length > 0)) && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14">
+          <div className="grid grid-cols-2 gap-2 md:gap-14">
             {!products &&
               !productsFetchingError &&
               new Array(4)
